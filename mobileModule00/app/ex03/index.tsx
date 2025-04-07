@@ -1,3 +1,4 @@
+import { evaluate } from 'mathjs';
 import { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from '../../assets/styles';
@@ -16,7 +17,7 @@ const Ex03 = () => {
   const [result, setResult] = useState(0);
 
   const handleCalculate = (expression: string) => {
-    const result = eval(expression);
+    const result = evaluate(expression);
     setResult(result);
   };
 
@@ -37,7 +38,13 @@ const Ex03 = () => {
             <CalculatorButton label="8" onPress={() => setExpression(expression + '8')} />
             <CalculatorButton label="9" onPress={() => setExpression(expression + '9')} />
             <CalculatorButton label="C" onPress={() => setExpression(expression.slice(0, -1))} />
-            <CalculatorButton label="AC" onPress={() => setExpression('')} />
+            <CalculatorButton
+              label="AC"
+              onPress={() => {
+                setExpression('');
+                setResult(0);
+              }}
+            />
           </View>
           <View style={calculatorStyles.buttonRow}>
             <CalculatorButton label="4" onPress={() => setExpression(expression + '4')} />
