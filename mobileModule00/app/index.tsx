@@ -24,7 +24,8 @@ const Index = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.columnContainer}>
+      <View style={[styles.columnContainer, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Text style={styles.largeText}>Mobile Module 00</Text>
         {exercises.map((exercise) => (
           <Link href={exercise.href} asChild key={exercise.title}>
             <TouchableOpacity style={styles.button}>
