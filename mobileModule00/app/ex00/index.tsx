@@ -1,5 +1,5 @@
 import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
-import { styles } from '../styles';
+import { styles } from '../../assets/styles';
 
 const Ex00 = () => {
   return (

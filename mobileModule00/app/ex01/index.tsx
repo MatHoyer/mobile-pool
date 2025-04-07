@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
-import { styles } from '../styles';
+import { styles } from '../../assets/styles';
 
 export const Ex01 = () => {
   const [text, setText] = useState('A simple text');
