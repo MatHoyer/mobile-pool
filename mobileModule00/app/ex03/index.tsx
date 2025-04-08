@@ -1,8 +1,68 @@
-import { evaluate } from 'mathjs';
 import { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from '../../assets/styles';
 import AppBar from '../../components/AppBar';
+
+const signs = ['+', '-', '*', '/'];
+const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+const toPostfix = (tokens: (number | string)[]): (number | string)[] => {
+  const output: (number | string)[] = [];
+  const operators: string[] = [];
+
+  const priority: Record<string, number> = {
+    '+': 1,
+    '-': 1,
+    '*': 2,
+    '/': 2,
+  };
+
+  for (const token of tokens) {
+    if (typeof token === 'number') {
+      output.push(token);
+    } else {
+      while (operators.length && priority[operators[operators.length - 1]] >= priority[token]) {
+        output.push(operators.pop()!);
+      }
+      operators.push(token);
+    }
+  }
+
+  while (operators.length) {
+    output.push(operators.pop()!);
+  }
+
+  return output;
+};
+
+const calculatePostfix = (tokens: (number | string)[]): number => {
+  const stack: number[] = [];
+
+  for (const token of tokens) {
+    if (typeof token === 'number') {
+      stack.push(token);
+    } else {
+      const right = stack.pop()!;
+      const left = stack.pop()!;
+      switch (token) {
+        case '+':
+          stack.push(left + right);
+          break;
+        case '-':
+          stack.push(left - right);
+          break;
+        case '*':
+          stack.push(left * right);
+          break;
+        case '/':
+          stack.push(left / right);
+          break;
+      }
+    }
+  }
+
+  return stack.pop()!;
+};
 
 const CalculatorButton: React.FC<{ label: string; onPress: () => void }> = ({ label, onPress }) => {
   return (
@@ -17,8 +77,60 @@ const Ex03 = () => {
   const [result, setResult] = useState(0);
 
   const handleCalculate = (expression: string) => {
-    const result = evaluate(expression);
-    setResult(result);
+    const tokens: (string | number)[] = [];
+    let numberToken: string = '';
+
+    if (!numbers.includes(expression.at(-1) ?? '')) return;
+
+    const parseNumberToken = (token: string) => {
+      return token.includes('.') ? parseFloat(token) : parseInt(token);
+    };
+
+    for (const [index, char] of expression.split('').entries()) {
+      if (signs.includes(char)) {
+        if (numberToken) tokens.push(parseNumberToken(numberToken));
+        tokens.push(char);
+        numberToken = '';
+      } else {
+        numberToken += char;
+      }
+      if (index === expression.length - 1) tokens.push(parseNumberToken(numberToken));
+    }
+
+    for (const [index, token] of tokens.entries()) {
+      if (token === '-' && signs.includes(tokens[index - 1] as string)) {
+        tokens[index + 1] = -tokens[index + 1];
+        tokens.splice(index, 1);
+      }
+    }
+
+    console.log(tokens);
+    setResult(calculatePostfix(toPostfix(tokens)));
+  };
+
+  const handleSignPress = (sign: '+' | '-' | '*' | '/') => {
+    setExpression((prev) => {
+      if (!prev) return '0' + sign;
+      if (sign === '-') {
+        if (prev.at(-1) === '-' && signs.includes(prev.at(-2) ?? '')) return prev.slice(0, -1) + sign;
+        return prev + sign;
+      }
+      if (signs.includes(prev.at(-1) ?? '') && signs.includes(prev.at(-2) ?? '')) return prev.slice(0, -2) + sign;
+      return (signs.includes(prev.at(-1) ?? '') ? prev.slice(0, -1) : prev) + sign;
+    });
+  };
+
+  const handlePointPress = () => {
+    setExpression((prev) => {
+      for (const [index, char] of prev.split('').reverse().entries()) {
+        if (signs.includes(char)) {
+          const lastElement = prev.slice(-index);
+          if (lastElement.includes('.')) return prev;
+          return prev + '.';
+        }
+      }
+      return prev.includes('.') ? prev : prev + '.';
+    });
   };
 
   return (
@@ -29,7 +141,7 @@ const Ex03 = () => {
       <View style={calculatorStyles.calculator}>
         <View style={calculatorStyles.displayContainer}>
           <Text style={styles.largeText}>{expression || 0}</Text>
-          <Text style={styles.largeText}>{result}</Text>
+          <Text>{result}</Text>
         </View>
         <View style={{ flex: 1 }} />
         <View style={calculatorStyles.buttonsContainer}>
@@ -50,19 +162,19 @@ const Ex03 = () => {
             <CalculatorButton label="4" onPress={() => setExpression(expression + '4')} />
             <CalculatorButton label="5" onPress={() => setExpression(expression + '5')} />
             <CalculatorButton label="6" onPress={() => setExpression(expression + '6')} />
-            <CalculatorButton label="+" onPress={() => setExpression(expression + '+')} />
-            <CalculatorButton label="-" onPress={() => setExpression(expression + '-')} />
+            <CalculatorButton label="+" onPress={() => handleSignPress('+')} />
+            <CalculatorButton label="-" onPress={() => handleSignPress('-')} />
           </View>
           <View style={calculatorStyles.buttonRow}>
             <CalculatorButton label="1" onPress={() => setExpression(expression + '1')} />
             <CalculatorButton label="2" onPress={() => setExpression(expression + '2')} />
             <CalculatorButton label="3" onPress={() => setExpression(expression + '3')} />
-            <CalculatorButton label="*" onPress={() => setExpression(expression + '*')} />
-            <CalculatorButton label="/" onPress={() => setExpression(expression + '/')} />
+            <CalculatorButton label="*" onPress={() => handleSignPress('*')} />
+            <CalculatorButton label="/" onPress={() => handleSignPress('/')} />
           </View>
           <View style={calculatorStyles.buttonRow}>
             <CalculatorButton label="0" onPress={() => setExpression(expression + '0')} />
-            <CalculatorButton label="." onPress={() => setExpression(expression + '.')} />
+            <CalculatorButton label="." onPress={() => handlePointPress()} />
             <CalculatorButton label="00" onPress={() => setExpression(expression + '00')} />
             <CalculatorButton label="=" onPress={() => handleCalculate(expression)} />
           </View>
