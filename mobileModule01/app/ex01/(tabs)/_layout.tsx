@@ -38,7 +38,7 @@ const TabLayout = () => {
   const [searchLocation, setSearchLocation] = useState('');
   const setLocation = useLocationStore((state) => state.setLocation);
 
-  const handleGeolocation = async () => {
+  const handleGeolocation = () => {
     setLocation('Geolocation');
   };
 
