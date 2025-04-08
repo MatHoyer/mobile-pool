@@ -1,5 +1,6 @@
-import { Link } from 'expo-router';
-import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+import Button from '@/components/Button';
+import { router } from 'expo-router';
+import { SafeAreaView, Text, View } from 'react-native';
 import { styles } from '../assets/styles';
 
 const Index = () => {
@@ -19,11 +20,9 @@ const Index = () => {
       <View style={[styles.columnContainer, { justifyContent: 'center', alignItems: 'center' }]}>
         <Text style={styles.largeText}>Mobile Module 01</Text>
         {exercises.map((exercise) => (
-          <Link href={exercise.href} asChild key={exercise.title}>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>{exercise.title}</Text>
-            </TouchableOpacity>
-          </Link>
+          <Button onPress={() => router.push(exercise.href)} key={exercise.title}>
+            <Text style={styles.buttonText}>{exercise.title}</Text>
+          </Button>
         ))}
       </View>
     </SafeAreaView>
