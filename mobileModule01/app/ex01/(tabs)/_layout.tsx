@@ -17,6 +17,7 @@ const TabLayout = () => {
 
   const handleSearch = (text: string) => {
     setLocation(text);
+    setSearchLocation('');
   };
 
   return (
