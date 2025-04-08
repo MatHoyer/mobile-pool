@@ -3,7 +3,7 @@ import Button from '@/components/Button';
 import Input from '@/components/Input';
 import useLocationStore from '@/hooks/locationStore';
 import { Href, Tabs, usePathname, useRouter } from 'expo-router';
-import { Calendar, CalendarDays, Navigation, Search, Settings } from 'lucide-react-native';
+import { Calendar, CalendarDays, Navigation, Search, Sun } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Dimensions, GestureResponderEvent, SafeAreaView, View } from 'react-native';
 
@@ -78,7 +78,7 @@ const TabLayout = () => {
           name="currently"
           options={{
             title: 'Currently',
-            tabBarIcon: () => <Settings />,
+            tabBarIcon: () => <Sun />,
           }}
         />
         <Tabs.Screen name="today" options={{ title: 'Today', tabBarIcon: () => <Calendar /> }} />

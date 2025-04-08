@@ -2,29 +2,22 @@ import AppBar from '@/components/AppBar';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import Typography from '@/components/Typography';
-import useLocationStore from '@/hooks/locationStore';
+import useLocationStore, { TLocation } from '@/hooks/locationStore';
 import * as Location from 'expo-location';
 import { Href, Tabs, usePathname, useRouter } from 'expo-router';
-import { Calendar, CalendarDays, Navigation, Search, Settings } from 'lucide-react-native';
+import { Calendar, CalendarDays, Navigation, Search, Sun } from 'lucide-react-native';
 import { ComponentProps, useEffect, useRef, useState } from 'react';
 import { Dimensions, FlatList, GestureResponderEvent, SafeAreaView, TextInput, View } from 'react-native';
 
-type TSuggestion = {
-  name: string;
-  region: string;
-  country: string;
-  lat: number;
-  lon: number;
-};
-
 const LocationSuggestions: React.FC<
   {
-    suggestions: TSuggestion[];
+    suggestions: TLocation[];
     touchingSuggestionRef: React.MutableRefObject<boolean>;
-    setSearchLocation: (location: string) => void;
     setIsFocused: (isFocused: boolean) => void;
   } & ComponentProps<typeof View>
-> = ({ suggestions, touchingSuggestionRef, setSearchLocation, setIsFocused, style, ...props }) => {
+> = ({ suggestions, touchingSuggestionRef, setIsFocused, style, ...props }) => {
+  const setSelectedLocation = useLocationStore((state) => state.setLocation);
+
   const handleTouchStart = () => {
     touchingSuggestionRef.current = true;
   };
@@ -61,7 +54,7 @@ const LocationSuggestions: React.FC<
             variant="ghost"
             style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', height: 50, gap: 10 }}
             onPress={() => {
-              setSearchLocation(item.name);
+              setSelectedLocation(item);
               setIsFocused(false);
             }}
           >
@@ -105,11 +98,12 @@ const TabLayout = () => {
   }, [activeIndex]);
 
   const [searchLocation, setSearchLocation] = useState('');
-  const [suggestions, setSuggestions] = useState<TSuggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<TLocation[]>([]);
   const [isFocused, setIsFocused] = useState(false);
   const [inputPosition, setInputPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const searchRef = useRef<TextInput>(null);
   const touchingSuggestionRef = useRef(false);
+  const location = useLocationStore((state) => state.location);
   const setLocation = useLocationStore((state) => state.setLocation);
 
   const handleGeolocation = async () => {
@@ -122,7 +116,18 @@ const TabLayout = () => {
     const location = await Location.getCurrentPositionAsync({});
     const { coords } = location;
 
-    setLocation(coords.latitude + ' ' + coords.longitude);
+    const address = await Location.reverseGeocodeAsync({
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+    });
+
+    setLocation({
+      name: address[0]?.city ?? '',
+      region: address[0]?.region ?? '',
+      country: address[0]?.country ?? '',
+      lat: coords.latitude,
+      lon: coords.longitude,
+    });
   };
 
   useEffect(() => {
@@ -154,7 +159,6 @@ const TabLayout = () => {
           lat: item.latitude,
           lon: item.longitude,
         }));
-        console.log(data);
         setSuggestions(data);
       }
     };
@@ -165,6 +169,10 @@ const TabLayout = () => {
 
     return () => clearTimeout(fetchTimeout);
   }, [searchLocation]);
+
+  useEffect(() => {
+    setSearchLocation(!!location ? location.name : '');
+  }, [location]);
 
   return (
     <SafeAreaView
@@ -211,7 +219,6 @@ const TabLayout = () => {
           width: inputPosition.width,
         }}
         touchingSuggestionRef={touchingSuggestionRef}
-        setSearchLocation={setSearchLocation}
         setIsFocused={setIsFocused}
       />
       <Tabs screenOptions={{ tabBarActiveTintColor: 'blue', headerShown: false }}>
@@ -219,7 +226,7 @@ const TabLayout = () => {
           name="currently"
           options={{
             title: 'Currently',
-            tabBarIcon: () => <Settings />,
+            tabBarIcon: () => <Sun />,
           }}
         />
         <Tabs.Screen name="today" options={{ title: 'Today', tabBarIcon: () => <Calendar /> }} />

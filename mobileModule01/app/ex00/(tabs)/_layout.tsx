@@ -1,5 +1,5 @@
 import { Href, Tabs, usePathname, useRouter } from 'expo-router';
-import { Calendar, CalendarDays, Settings } from 'lucide-react-native';
+import { Calendar, CalendarDays, Sun } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Dimensions, GestureResponderEvent, SafeAreaView } from 'react-native';
 
@@ -38,7 +38,7 @@ const TabLayout = () => {
           name="currently"
           options={{
             title: 'Currently',
-            tabBarIcon: () => <Settings />,
+            tabBarIcon: () => <Sun />,
           }}
         />
         <Tabs.Screen name="today" options={{ title: 'Today', tabBarIcon: () => <Calendar /> }} />

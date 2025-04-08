@@ -1,7 +1,7 @@
 import { styles } from '@/assets/styles';
 import Typography from '@/components/Typography';
 import useLocationStore from '@/hooks/locationStore';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 
 const WeeklyTab = () => {
   const location = useLocationStore((state) => state.location);
@@ -19,7 +19,15 @@ const WeeklyTab = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Typography variant="large">Weekly</Typography>
-      <Typography>{location}</Typography>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <Typography>{location.name}</Typography>
+        <Typography>{location.region}</Typography>
+        <Typography>{location.country}</Typography>
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <Typography>{location.lat}</Typography>
+        <Typography>{location.lon}</Typography>
+      </View>
     </SafeAreaView>
   );
 };
