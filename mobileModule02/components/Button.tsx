@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react';
+import { ComponentProps } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
 const mainStyle = StyleSheet.create({
@@ -20,11 +20,12 @@ const buttonStyles = StyleSheet.create({
   },
 });
 
-const Button: React.FC<{ variant?: keyof typeof buttonStyles } & ComponentPropsWithoutRef<typeof TouchableOpacity>> = ({
+const Button: React.FC<{ variant?: keyof typeof buttonStyles } & ComponentProps<typeof TouchableOpacity>> = ({
   variant = 'default',
+  style,
   ...props
 }) => {
-  return <TouchableOpacity style={[mainStyle.button, buttonStyles[variant]]} {...props} />;
+  return <TouchableOpacity style={[mainStyle.button, buttonStyles[variant], style]} {...props} />;
 };
 
 export default Button;

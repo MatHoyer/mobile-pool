@@ -10,10 +10,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     gap: 10,
   },
-  largeText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
   buttonText: {
     color: 'white',
     fontSize: 16,
