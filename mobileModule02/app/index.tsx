@@ -1,4 +1,5 @@
 import Button from '@/components/Button';
+import Typography from '@/components/Typography';
 import { router } from 'expo-router';
 import { SafeAreaView, Text, View } from 'react-native';
 import { styles } from '../assets/styles';
@@ -18,7 +19,7 @@ const Index = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={[styles.columnContainer, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={styles.largeText}>Mobile Module 02</Text>
+        <Typography variant="large">Mobile Module 02</Typography>
         {exercises.map((exercise) => (
           <Button onPress={() => router.push(exercise.href)} key={exercise.title}>
             <Text style={styles.buttonText}>{exercise.title}</Text>

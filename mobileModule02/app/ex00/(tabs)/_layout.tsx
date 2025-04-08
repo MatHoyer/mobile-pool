@@ -4,10 +4,10 @@ import Input from '@/components/Input';
 import Typography from '@/components/Typography';
 import useLocationStore from '@/hooks/locationStore';
 import * as Location from 'expo-location';
-import { Tabs } from 'expo-router';
+import { Href, Tabs, usePathname, useRouter } from 'expo-router';
 import { Calendar, CalendarDays, Navigation, Search, Settings } from 'lucide-react-native';
 import { ComponentProps, useEffect, useRef, useState } from 'react';
-import { FlatList, SafeAreaView, TextInput, View } from 'react-native';
+import { Dimensions, FlatList, GestureResponderEvent, SafeAreaView, TextInput, View } from 'react-native';
 
 type TSuggestion = {
   name: string;
@@ -76,7 +76,34 @@ const LocationSuggestions: React.FC<
   );
 };
 
+const tabs = ['currently', 'today', 'weekly'];
+
 const TabLayout = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [touchStartX, setTouchStartX] = useState(0);
+  const pathname = usePathname();
+  const router = useRouter();
+  const width = Dimensions.get('window').width;
+
+  const handleTouchStart = (event: GestureResponderEvent) => {
+    const { locationX } = event.nativeEvent;
+    setTouchStartX(locationX);
+  };
+
+  const handleTouchEnd = (event: GestureResponderEvent) => {
+    const { locationX } = event.nativeEvent;
+    const index = Math.round((locationX - touchStartX) / width);
+    if (index === 0) return;
+    setActiveIndex((prev) => Math.max(0, Math.min(tabs.length - 1, prev - index)));
+  };
+
+  useEffect(() => {
+    if (pathname.endsWith(tabs[activeIndex])) return;
+    const urlParts = pathname.split('/');
+    const url = urlParts.slice(0, -1).join('/');
+    router.push(`${url}/${tabs[activeIndex]}` as Href);
+  }, [activeIndex]);
+
   const [searchLocation, setSearchLocation] = useState('');
   const [suggestions, setSuggestions] = useState<TSuggestion[]>([]);
   const [isFocused, setIsFocused] = useState(false);
@@ -145,6 +172,8 @@ const TabLayout = () => {
         flex: 1,
         position: 'relative',
       }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <AppBar>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, gap: 10 }}>

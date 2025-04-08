@@ -2,12 +2,39 @@ import AppBar from '@/components/AppBar';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import useLocationStore from '@/hooks/locationStore';
-import { Tabs } from 'expo-router';
+import { Href, Tabs, usePathname, useRouter } from 'expo-router';
 import { Calendar, CalendarDays, Navigation, Search, Settings } from 'lucide-react-native';
-import { useState } from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Dimensions, GestureResponderEvent, SafeAreaView, View } from 'react-native';
+
+const tabs = ['currently', 'today', 'weekly'];
 
 const TabLayout = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [touchStartX, setTouchStartX] = useState(0);
+  const pathname = usePathname();
+  const router = useRouter();
+  const width = Dimensions.get('window').width;
+
+  const handleTouchStart = (event: GestureResponderEvent) => {
+    const { locationX } = event.nativeEvent;
+    setTouchStartX(locationX);
+  };
+
+  const handleTouchEnd = (event: GestureResponderEvent) => {
+    const { locationX } = event.nativeEvent;
+    const index = Math.round((locationX - touchStartX) / width);
+    if (index === 0) return;
+    setActiveIndex((prev) => Math.max(0, Math.min(tabs.length - 1, prev - index)));
+  };
+
+  useEffect(() => {
+    if (pathname.endsWith(tabs[activeIndex])) return;
+    const urlParts = pathname.split('/');
+    const url = urlParts.slice(0, -1).join('/');
+    router.push(`${url}/${tabs[activeIndex]}` as Href);
+  }, [activeIndex]);
+
   const [searchLocation, setSearchLocation] = useState('');
   const setLocation = useLocationStore((state) => state.setLocation);
 
@@ -25,6 +52,8 @@ const TabLayout = () => {
       style={{
         flex: 1,
       }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <AppBar>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, gap: 10 }}>
