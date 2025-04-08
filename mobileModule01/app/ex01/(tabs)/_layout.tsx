@@ -2,7 +2,6 @@ import AppBar from '@/components/AppBar';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import useLocationStore from '@/hooks/locationStore';
-import * as Location from 'expo-location';
 import { Tabs } from 'expo-router';
 import { Calendar, CalendarDays, Navigation, Search, Settings } from 'lucide-react-native';
 import { useState } from 'react';
@@ -13,20 +12,7 @@ const TabLayout = () => {
   const setLocation = useLocationStore((state) => state.setLocation);
 
   const handleGeolocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      return;
-    }
-
-    const location = await Location.getCurrentPositionAsync({});
-    const { coords } = location;
-
-    const address = await Location.reverseGeocodeAsync({
-      latitude: coords.latitude,
-      longitude: coords.longitude,
-    });
-
-    setLocation(address[0]?.city ?? '');
+    setLocation('Geolocation');
   };
 
   const handleSearch = (text: string) => {
