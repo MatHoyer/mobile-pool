@@ -105,7 +105,6 @@ const TabLayout = () => {
   const touchingSuggestionRef = useRef(false);
   const location = useLocationStore((state) => state.location);
   const setLocation = useLocationStore((state) => state.setLocation);
-  const { setCurrentWeather, setHourlyWeather, setDailyWeather } = useLocationStore((state) => state);
 
   const handleGeolocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -173,53 +172,6 @@ const TabLayout = () => {
 
   useEffect(() => {
     setSearchLocation(!!location ? location.name : '');
-    if (!location) return;
-    const fetchWeather = async (url: string) => {
-      const weather = await fetch(url);
-      return await weather.json();
-    };
-
-    const fetchCurrentWeather = async () => {
-      const currentwether = await fetchWeather(
-        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current=temperature_2m,wind_speed_10m&timezone=Europe%2FParis`
-      );
-      console.log('currentwether', currentwether);
-      setCurrentWeather({
-        temperature: currentwether.current.temperature_2m,
-        windSpeed: currentwether.current.wind_speed_10m,
-      });
-    };
-    const fetchHourlyWeather = async () => {
-      const hourlyWeather = await fetchWeather(
-        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&hourly=temperature_2m,wind_speed_10m&forecast_days=1&timezone=Europe%2FParis`
-      );
-      console.log('hourlyWeather', hourlyWeather);
-      setHourlyWeather(
-        hourlyWeather.hourly.time.map((time: string, index: number) => ({
-          hour: new Date(time),
-          temperature: hourlyWeather.hourly.temperature_2m[index],
-          windSpeed: hourlyWeather.hourly.wind_speed_10m[index],
-        }))
-      );
-    };
-    const fetchDailyWeather = async () => {
-      const dailyWeather = await fetchWeather(
-        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&forecast_days=10&timezone=Europe%2FParis`
-      );
-      console.log('dailyWeather', dailyWeather);
-      setDailyWeather(
-        dailyWeather.daily.time.map((time: string, index: number) => ({
-          day: new Date(time),
-          temperatureMax: dailyWeather.daily.temperature_2m_max[index],
-          temperatureMin: dailyWeather.daily.temperature_2m_min[index],
-          precipitationSum: dailyWeather.daily.precipitation_sum[index],
-        }))
-      );
-    };
-
-    fetchCurrentWeather();
-    fetchHourlyWeather();
-    fetchDailyWeather();
   }, [location]);
 
   return (
