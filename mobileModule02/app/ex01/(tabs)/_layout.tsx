@@ -142,25 +142,26 @@ const TabLayout = () => {
 
   useEffect(() => {
     const fetchSuggestions = async () => {
-      if (searchLocation) {
-        const resultSuggestions = await fetch(
-          `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
-            searchLocation
-          )}&count=5&language=fr&format=json`
-        );
-        const jsonData = (await resultSuggestions.json()) as {
-          results: { name: string; admin1: string; country: string; latitude: number; longitude: number }[];
-        };
-        if (!jsonData?.results) return;
-        const data = jsonData.results.map((item) => ({
-          name: item.name,
-          region: item.admin1,
-          country: item.country,
-          lat: item.latitude,
-          lon: item.longitude,
-        }));
-        setSuggestions(data);
+      const resultSuggestions = await fetch(
+        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
+          searchLocation
+        )}&count=5&language=fr&format=json`
+      );
+      const jsonData = (await resultSuggestions.json()) as {
+        results: { name: string; admin1: string; country: string; latitude: number; longitude: number }[];
+      };
+      if (!jsonData?.results) {
+        setSuggestions([]);
+        return;
       }
+      const data = jsonData.results.map((item) => ({
+        name: item.name,
+        region: item.admin1,
+        country: item.country,
+        lat: item.latitude,
+        lon: item.longitude,
+      }));
+      setSuggestions(data);
     };
 
     const fetchTimeout = setTimeout(() => {
@@ -210,13 +211,7 @@ const TabLayout = () => {
                 });
                 return;
               }
-              setLocation({
-                name: searchLocation,
-                region: '',
-                country: '',
-                lat: 0,
-                lon: 0,
-              });
+              setLocation(null);
             }}
             onFocus={() => setIsFocused(true)}
           />
