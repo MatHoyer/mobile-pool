@@ -1,73 +1,12 @@
 import AppBar from '@/components/AppBar';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
-import Typography from '@/components/Typography';
-import useLocationStore, { TLocation } from '@/hooks/locationStore';
+import useLocationStore from '@/hooks/locationStore';
 import * as Location from 'expo-location';
 import { Href, Tabs, usePathname, useRouter } from 'expo-router';
 import { Calendar, CalendarDays, Navigation, Search, Sun } from 'lucide-react-native';
-import { ComponentProps, useEffect, useRef, useState } from 'react';
-import { Dimensions, FlatList, GestureResponderEvent, SafeAreaView, TextInput, View } from 'react-native';
-
-const LocationSuggestions: React.FC<
-  {
-    suggestions: TLocation[];
-    touchingSuggestionRef: React.MutableRefObject<boolean>;
-    setIsFocused: (isFocused: boolean) => void;
-  } & ComponentProps<typeof View>
-> = ({ suggestions, touchingSuggestionRef, setIsFocused, style, ...props }) => {
-  const setSelectedLocation = useLocationStore((state) => state.setLocation);
-
-  const handleTouchStart = () => {
-    touchingSuggestionRef.current = true;
-  };
-
-  const handleTouchEnd = () => {
-    setTimeout(() => {
-      touchingSuggestionRef.current = false;
-    }, 300);
-  };
-
-  return (
-    <View
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      style={[
-        style,
-        {
-          position: 'absolute',
-          backgroundColor: 'white',
-          borderWidth: 1,
-          borderColor: '#ccc',
-          zIndex: 999,
-          maxHeight: 200,
-          borderBottomLeftRadius: 8,
-          borderBottomRightRadius: 8,
-        },
-      ]}
-      {...props}
-    >
-      <FlatList
-        data={suggestions}
-        renderItem={({ item }) => (
-          <Button
-            variant="ghost"
-            style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', height: 50, gap: 10 }}
-            onPress={() => {
-              setSelectedLocation(item);
-              setIsFocused(false);
-            }}
-          >
-            <Typography>{item.name}</Typography>
-            <Typography variant="muted">{item.region}</Typography>
-            <Typography variant="muted">{item.country}</Typography>
-          </Button>
-        )}
-        keyExtractor={(_, index) => '' + index}
-      />
-    </View>
-  );
-};
+import { useEffect, useRef, useState } from 'react';
+import { Dimensions, GestureResponderEvent, SafeAreaView, TextInput, View } from 'react-native';
 
 const tabs = ['currently', 'today', 'weekly'];
 
@@ -98,11 +37,7 @@ const TabLayout = () => {
   }, [activeIndex]);
 
   const [searchLocation, setSearchLocation] = useState('');
-  const [suggestions, setSuggestions] = useState<TLocation[]>([]);
-  const [isFocused, setIsFocused] = useState(false);
-  const [inputPosition, setInputPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const searchRef = useRef<TextInput>(null);
-  const touchingSuggestionRef = useRef(false);
   const location = useLocationStore((state) => state.location);
   const setLocation = useLocationStore((state) => state.setLocation);
 
@@ -135,42 +70,6 @@ const TabLayout = () => {
   }, []);
 
   useEffect(() => {
-    searchRef.current?.measureInWindow((x, y, width, height) => {
-      setInputPosition({ x, y, width, height });
-    });
-  }, [searchRef.current, isFocused]);
-
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      if (searchLocation) {
-        const resultSuggestions = await fetch(
-          `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
-            searchLocation
-          )}&count=5&language=fr&format=json`
-        );
-        const jsonData = (await resultSuggestions.json()) as {
-          results: { name: string; admin1: string; country: string; latitude: number; longitude: number }[];
-        };
-        if (!jsonData?.results) return;
-        const data = jsonData.results.map((item) => ({
-          name: item.name,
-          region: item.admin1,
-          country: item.country,
-          lat: item.latitude,
-          lon: item.longitude,
-        }));
-        setSuggestions(data);
-      }
-    };
-
-    const fetchTimeout = setTimeout(() => {
-      fetchSuggestions();
-    }, 500);
-
-    return () => clearTimeout(fetchTimeout);
-  }, [searchLocation]);
-
-  useEffect(() => {
     setSearchLocation(!!location ? location.name : '');
   }, [location]);
 
@@ -190,17 +89,19 @@ const TabLayout = () => {
             placeholder="Search"
             style={{
               flex: 1,
-              borderBottomLeftRadius: isFocused && suggestions.length > 0 ? 0 : 8,
-              borderBottomRightRadius: isFocused && suggestions.length > 0 ? 0 : 8,
             }}
             onChangeText={setSearchLocation}
             value={searchLocation}
             inputRef={searchRef}
             onBlur={() => {
-              if (touchingSuggestionRef.current) return;
-              setIsFocused(false);
+              setLocation({
+                name: searchLocation,
+                region: '',
+                country: '',
+                lat: 0,
+                lon: 0,
+              });
             }}
-            onFocus={() => setIsFocused(true)}
           />
           <View style={{ width: 2, height: 20, backgroundColor: 'black' }} />
           <View style={{ width: 40 }}>
@@ -210,17 +111,6 @@ const TabLayout = () => {
           </View>
         </View>
       </AppBar>
-      <LocationSuggestions
-        suggestions={suggestions}
-        style={{
-          display: isFocused && suggestions.length > 0 ? 'flex' : 'none',
-          top: inputPosition.y + inputPosition.height,
-          left: inputPosition.x,
-          width: inputPosition.width,
-        }}
-        touchingSuggestionRef={touchingSuggestionRef}
-        setIsFocused={setIsFocused}
-      />
       <Tabs screenOptions={{ tabBarActiveTintColor: 'blue', headerShown: false }}>
         <Tabs.Screen
           name="currently"
