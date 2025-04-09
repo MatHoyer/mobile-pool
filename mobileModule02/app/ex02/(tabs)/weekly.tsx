@@ -1,8 +1,10 @@
 import { styles } from '@/assets/styles';
 import Typography from '@/components/Typography';
 import useLocationStore from '@/hooks/locationStore';
+import { getDateAsString, weatherCodeToCondition } from '@/lib/utils';
+import { Calendar, ThermometerSnowflake, ThermometerSun } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { FlatList, SafeAreaView, View } from 'react-native';
 
 type TDailyWeather = {
   day: Date;
@@ -48,17 +50,54 @@ const WeeklyTab = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Typography variant="large">Weekly</Typography>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        {location.name && <Typography>{location.name}</Typography>}
-        {location.region && <Typography>{location.region}</Typography>}
-        {location.country && <Typography>{location.country}</Typography>}
+    <SafeAreaView
+      style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10,
+        padding: 10,
+      }}
+    >
+      <View style={{ flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+        <Typography variant="h1">{location.name}</Typography>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <Typography>{location.region}</Typography>
+          <Typography>{location.country}</Typography>
+        </View>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        <Typography>{location.lat}</Typography>
-        <Typography>{location.lon}</Typography>
+        <View style={{ width: '20%', alignItems: 'center' }}>
+          <Calendar />
+        </View>
+        <View style={{ width: '20%', alignItems: 'center' }}>
+          <ThermometerSnowflake />
+        </View>
+        <View style={{ width: '20%', alignItems: 'center' }}>
+          <ThermometerSun />
+        </View>
       </View>
+      <View style={{ width: '95%', alignSelf: 'center', height: 1, backgroundColor: 'gray' }} />
+      <FlatList
+        style={{ flex: 1, width: '100%', alignSelf: 'center', marginBottom: 50 }}
+        data={dailyWeather}
+        renderItem={({ item }) => (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 10 }}>
+            <View style={{ width: '20%', alignItems: 'center' }}>
+              <Typography>{getDateAsString({ date: item.day, type: ['DAY', 'MONTH'], separator: '/' })}</Typography>
+            </View>
+            <View style={{ width: '20%', alignItems: 'center' }}>
+              <Typography>{item.temperatureMin}°C</Typography>
+            </View>
+            <View style={{ width: '20%', alignItems: 'center' }}>
+              <Typography>{item.temperatureMax}°C</Typography>
+            </View>
+            <View style={{ width: '30%', alignItems: 'center' }}>
+              <Typography>{weatherCodeToCondition(item.weatherCode)}</Typography>
+            </View>
+          </View>
+        )}
+      />
     </SafeAreaView>
   );
 };

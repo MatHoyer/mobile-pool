@@ -199,6 +199,24 @@ const TabLayout = () => {
             onBlur={() => {
               if (touchingSuggestionRef.current) return;
               setIsFocused(false);
+              if (suggestions.length > 0) {
+                const suggestion = suggestions[0];
+                setLocation({
+                  name: suggestion.name,
+                  region: suggestion.region,
+                  country: suggestion.country,
+                  lat: suggestion.lat,
+                  lon: suggestion.lon,
+                });
+                return;
+              }
+              setLocation({
+                name: searchLocation,
+                region: '',
+                country: '',
+                lat: 0,
+                lon: 0,
+              });
             }}
             onFocus={() => setIsFocused(true)}
           />
