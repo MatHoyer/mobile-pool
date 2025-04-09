@@ -14,6 +14,10 @@ const Index = () => {
       title: 'Exercise 01',
       href: '../ex01',
     },
+    {
+      title: 'Exercise 02',
+      href: '../ex02',
+    },
   ] as const;
 
   return (

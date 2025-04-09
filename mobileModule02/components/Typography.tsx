@@ -10,6 +10,17 @@ const typographyStyles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
+  h1: {
+    fontSize: 48,
+    fontWeight: 'bold',
+  },
+  h2: {
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
+  h3: {
+    fontSize: 24,
+  },
   small: {
     fontSize: 12,
   },
