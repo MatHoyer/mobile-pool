@@ -173,7 +173,7 @@ const TabLayout = () => {
 
     const fetchTimeout = setTimeout(() => {
       fetchSuggestions();
-    }, 500);
+    }, 150);
 
     return () => clearTimeout(fetchTimeout);
   }, [searchLocation]);
@@ -206,7 +206,9 @@ const TabLayout = () => {
             inputRef={searchRef}
             onBlur={() => {
               if (touchingSuggestionRef.current) return;
-              setIsFocused(false);
+              setTimeout(() => {
+                setIsFocused(false);
+              }, 200);
               if (suggestions.length > 0) {
                 const suggestion = suggestions[0];
                 setLocation({
