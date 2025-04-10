@@ -154,13 +154,15 @@ const TabLayout = () => {
         setSuggestions([]);
         return;
       }
-      const data = jsonData.results.map((item) => ({
-        name: item.name,
-        region: item.admin1,
-        country: item.country,
-        lat: item.latitude,
-        lon: item.longitude,
-      }));
+      const data = jsonData.results
+        .map((item) => ({
+          name: item.name,
+          region: item.admin1,
+          country: item.country,
+          lat: item.latitude,
+          lon: item.longitude,
+        }))
+        .filter((s) => s.name || s.region || s.country);
       setSuggestions(data);
     };
 
