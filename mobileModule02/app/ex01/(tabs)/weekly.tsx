@@ -20,7 +20,7 @@ const WeeklyTab = () => {
 
     const fetchDailyWeather = async () => {
       const weather = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&forecast_days=10&timezone=Europe%2FParis`
+        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&forecast_days=7&timezone=Europe%2FParis`
       );
       const dailyWeather = await weather.json();
       console.log('Daily weather', dailyWeather);
