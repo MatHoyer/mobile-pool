@@ -49,7 +49,7 @@ const CurrentlyTab = () => {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: 'transparent' }]}>
+    <SafeAreaView style={styles.container}>
       <View style={{ flexDirection: 'column', alignItems: 'center', gap: 10 }}>
         {currentWeather?.temperature !== undefined && (
           <Typography variant="h1">{currentWeather?.temperature}°</Typography>

@@ -4,18 +4,76 @@ import Input from '@/components/Input';
 import Typography from '@/components/Typography';
 import useLocationStore, { TLocation } from '@/hooks/locationStore';
 import * as Location from 'expo-location';
-import { Href, Tabs, usePathname, useRouter } from 'expo-router';
 import { Calendar, CalendarDays, Navigation, Search, Sun } from 'lucide-react-native';
 import { ComponentProps, useEffect, useRef, useState } from 'react';
 import {
-  Dimensions,
   FlatList,
-  GestureResponderEvent,
   ImageBackground,
+  Pressable,
   SafeAreaView,
+  Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from 'react-native';
+import { NavigationState, Route, SceneMap, TabView } from 'react-native-tab-view';
+import CurrentlyTab from './tabs/currently';
+import TodayTab from './tabs/today';
+import WeeklyTab from './tabs/weekly';
+
+const renderScene = SceneMap({
+  currently: CurrentlyTab,
+  today: TodayTab,
+  weekly: WeeklyTab,
+});
+
+const routes = [
+  { key: 'currently', title: 'Currently' },
+  { key: 'today', title: 'Today' },
+  { key: 'weekly', title: 'Weekly' },
+];
+
+const CustomTabbar: React.FC<{
+  navigationState: NavigationState<Route>;
+  jumpTo: (key: string) => void;
+}> = ({ navigationState, jumpTo }) => {
+  return (
+    <View style={{ flexDirection: 'row', backgroundColor: 'white' }}>
+      {navigationState.routes.map((route, index) => {
+        const isFocused = navigationState.index === index;
+        const color = isFocused ? 'orange' : 'gray';
+
+        const renderIcon = () => {
+          switch (route.key) {
+            case 'currently':
+              return <Sun color={color} size={24} />;
+            case 'today':
+              return <Calendar color={color} size={24} />;
+            case 'weekly':
+              return <CalendarDays color={color} size={24} />;
+            default:
+              return null;
+          }
+        };
+
+        return (
+          <Pressable
+            key={route.key}
+            onPress={() => jumpTo(route.key)}
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              padding: 10,
+            }}
+          >
+            {renderIcon()}
+            <Text style={{ color, marginTop: 4 }}>{route.title}</Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+};
 
 const LocationSuggestions: React.FC<
   {
@@ -77,33 +135,9 @@ const LocationSuggestions: React.FC<
   );
 };
 
-const tabs = ['currently', 'today', 'weekly'];
-
 const TabLayout = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [touchStartX, setTouchStartX] = useState(0);
-  const pathname = usePathname();
-  const router = useRouter();
-  const width = Dimensions.get('window').width;
-
-  const handleTouchStart = (event: GestureResponderEvent) => {
-    const { locationX } = event.nativeEvent;
-    setTouchStartX(locationX);
-  };
-
-  const handleTouchEnd = (event: GestureResponderEvent) => {
-    const { locationX } = event.nativeEvent;
-    const index = Math.round((locationX - touchStartX) / width);
-    if (index === 0) return;
-    setActiveIndex((prev) => Math.max(0, Math.min(tabs.length - 1, prev - index)));
-  };
-
-  useEffect(() => {
-    if (pathname.endsWith(tabs[activeIndex])) return;
-    const urlParts = pathname.split('/');
-    const url = urlParts.slice(0, -1).join('/');
-    router.push(`${url}/${tabs[activeIndex]}` as Href);
-  }, [activeIndex]);
+  const [index, setIndex] = useState(0);
+  const layout = useWindowDimensions();
 
   const [searchLocation, setSearchLocation] = useState('');
   const [suggestions, setSuggestions] = useState<TLocation[]>([]);
@@ -196,8 +230,6 @@ const TabLayout = () => {
         flex: 1,
         position: 'relative',
       }}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
     >
       <AppBar>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, gap: 10 }}>
@@ -240,6 +272,26 @@ const TabLayout = () => {
           </View>
         </View>
       </AppBar>
+
+      <ImageBackground
+        source={require('@/assets/images/background.png')}
+        resizeMode="cover"
+        style={{
+          flex: 1,
+          width: '100%',
+          height: '100%',
+        }}
+      >
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: layout.width }}
+          tabBarPosition="bottom"
+          renderTabBar={(props) => <CustomTabbar {...props} />}
+        />
+      </ImageBackground>
+
       <LocationSuggestions
         suggestions={suggestions}
         style={{
@@ -251,31 +303,6 @@ const TabLayout = () => {
         touchingSuggestionRef={touchingSuggestionRef}
         setIsFocused={setIsFocused}
       />
-
-      <ImageBackground
-        source={require('@/assets/images/background.png')}
-        resizeMode="cover"
-        style={{
-          flex: 1,
-        }}
-      />
-      <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: 'blue',
-          headerShown: false,
-          tabBarStyle: { backgroundColor: 'transparent' },
-        }}
-      >
-        <Tabs.Screen
-          name="currently"
-          options={{
-            title: 'Currently',
-            tabBarIcon: () => <Sun />,
-          }}
-        />
-        <Tabs.Screen name="today" options={{ title: 'Today', tabBarIcon: () => <Calendar /> }} />
-        <Tabs.Screen name="weekly" options={{ title: 'Weekly', tabBarIcon: () => <CalendarDays /> }} />
-      </Tabs>
     </SafeAreaView>
   );
 };
