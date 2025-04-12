@@ -3,7 +3,7 @@ import Typography from '@/components/Typography';
 import useLocationStore from '@/hooks/locationStore';
 import { weatherCodeToCondition } from '@/lib/utils';
 import { Wind } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
 
 type TCurrentWeather = {
@@ -52,10 +52,13 @@ const CurrentlyTab = () => {
     <SafeAreaView style={styles.container}>
       <View style={{ flexDirection: 'column', alignItems: 'center', gap: 10 }}>
         {currentWeather?.temperature !== undefined && (
-          <Typography variant="h1">{currentWeather?.temperature}°</Typography>
+          <Typography variant="h1">{currentWeather.temperature}°</Typography>
         )}
         {currentWeather?.weatherCode !== undefined && (
-          <Typography>{weatherCodeToCondition(currentWeather?.weatherCode)}</Typography>
+          <View style={{ flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+            <Typography>{React.createElement(weatherCodeToCondition(currentWeather.weatherCode).icon)}</Typography>
+            <Typography variant="muted">{weatherCodeToCondition(currentWeather.weatherCode).label}</Typography>
+          </View>
         )}
         <Typography variant="large">{location.name}</Typography>
         <View style={{ flexDirection: 'row', gap: 10 }}>

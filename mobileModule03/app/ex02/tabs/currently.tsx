@@ -49,22 +49,24 @@ const CurrentlyTab = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { position: 'relative' }]}>
+      <View style={{ position: 'absolute', top: 20, flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+        <Typography variant="h1">{location.name}</Typography>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <Typography>{location.region}</Typography>
+          <Typography>{location.country}</Typography>
+        </View>
+      </View>
       <View style={{ flexDirection: 'column', alignItems: 'center', gap: 10 }}>
         {currentWeather?.temperature !== undefined && (
           <Typography variant="h1">{currentWeather?.temperature}°</Typography>
         )}
         {currentWeather?.weatherCode !== undefined && (
           <View style={{ flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-            <Typography>{React.createElement(weatherCodeToCondition(currentWeather?.weatherCode).icon)}</Typography>
-            <Typography variant="muted">{weatherCodeToCondition(currentWeather?.weatherCode).label}</Typography>
+            <Typography>{React.createElement(weatherCodeToCondition(currentWeather.weatherCode).icon)}</Typography>
+            <Typography variant="muted">{weatherCodeToCondition(currentWeather.weatherCode).label}</Typography>
           </View>
         )}
-        <Typography variant="large">{location.name}</Typography>
-        <View style={{ flexDirection: 'row', gap: 10 }}>
-          <Typography>{location.region}</Typography>
-          <Typography>{location.country}</Typography>
-        </View>
         {currentWeather?.windSpeed !== undefined && (
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
             <Wind />
