@@ -19,19 +19,24 @@ const WeeklyTab = () => {
     if (!location) return;
 
     const fetchDailyWeather = async () => {
-      const weather = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&forecast_days=7&timezone=Europe%2FParis`
-      );
-      const dailyWeather = await weather.json();
-      console.log('Daily weather', dailyWeather);
-      const parsedData = dailyWeather.daily.time.map((time: string, index: number) => ({
-        day: new Date(time),
-        temperatureMax: dailyWeather.daily.temperature_2m_max[index],
-        temperatureMin: dailyWeather.daily.temperature_2m_min[index],
-        weatherCode: dailyWeather.daily.weathercode[index],
-      }));
-      console.log('Daily weather', parsedData);
-      setDailyWeather(parsedData);
+      try {
+        const weather = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&forecast_days=7&timezone=Europe%2FParis`
+        );
+        if (!weather.ok) {
+          throw new Error('Failed to fetch weather data');
+        }
+        const dailyWeather = await weather.json();
+        const parsedData = dailyWeather.daily.time.map((time: string, index: number) => ({
+          day: new Date(time),
+          temperatureMax: dailyWeather.daily.temperature_2m_max[index],
+          temperatureMin: dailyWeather.daily.temperature_2m_min[index],
+          weatherCode: dailyWeather.daily.weathercode[index],
+        }));
+        setDailyWeather(parsedData);
+      } catch (error) {
+        setDailyWeather([]);
+      }
     };
 
     fetchDailyWeather();

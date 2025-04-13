@@ -17,24 +17,30 @@ const TodayTab = () => {
   const location = useLocationStore((state) => state.location);
   const error = useLocationStore((state) => state.error);
   const [hourlyWeather, setHourlyWeather] = useState<THourlyWeather[]>([]);
+  const setError = useLocationStore((state) => state.setError);
 
   useEffect(() => {
     if (!location) return;
 
     const fetchHourlyWeather = async () => {
-      const weather = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&hourly=temperature_2m,wind_speed_10m,weathercode&forecast_days=1&timezone=Europe%2FParis`
-      );
-      const hourlyWeather = await weather.json();
-      console.log('Hourly weather', hourlyWeather);
-      const parsedData = hourlyWeather.hourly.time.map((time: string, index: number) => ({
-        hour: new Date(time),
-        temperature: hourlyWeather.hourly.temperature_2m[index],
-        windSpeed: hourlyWeather.hourly.wind_speed_10m[index],
-        weatherCode: hourlyWeather.hourly.weathercode[index],
-      }));
-      console.log('Hourly weather', parsedData);
-      setHourlyWeather(parsedData);
+      try {
+        const weather = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&hourly=temperature_2m,wind_speed_10m,weathercode&forecast_days=1&timezone=Europe%2FParis`
+        );
+        if (!weather.ok) {
+          throw new Error('Failed to fetch weather data');
+        }
+        const hourlyWeather = await weather.json();
+        const parsedData = hourlyWeather.hourly.time.map((time: string, index: number) => ({
+          hour: new Date(time),
+          temperature: hourlyWeather.hourly.temperature_2m[index],
+          windSpeed: hourlyWeather.hourly.wind_speed_10m[index],
+          weatherCode: hourlyWeather.hourly.weathercode[index],
+        }));
+        setHourlyWeather(parsedData);
+      } catch (error) {
+        setError('Failed to fetch weather data');
+      }
     };
 
     fetchHourlyWeather();

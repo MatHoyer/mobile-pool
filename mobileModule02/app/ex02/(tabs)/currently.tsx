@@ -20,18 +20,23 @@ const CurrentlyTab = () => {
     if (!location) return;
 
     const fetchCurrentWeather = async () => {
-      const weather = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current=temperature_2m,wind_speed_10m,weathercode&timezone=Europe%2FParis`
-      );
-      const currentwether = await weather.json();
-      console.log('Current weather', currentwether);
-      const parsedData = {
-        temperature: currentwether.current.temperature_2m,
-        windSpeed: currentwether.current.wind_speed_10m,
-        weatherCode: currentwether.current.weathercode,
-      };
-      console.log('Current weather', parsedData);
-      setCurrentWeather(parsedData);
+      try {
+        const weather = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current=temperature_2m,wind_speed_10m,weathercode&timezone=Europe%2FParis`
+        );
+        if (!weather.ok) {
+          throw new Error('Failed to fetch weather data');
+        }
+        const currentwether = await weather.json();
+        const parsedData = {
+          temperature: currentwether.current.temperature_2m,
+          windSpeed: currentwether.current.wind_speed_10m,
+          weatherCode: currentwether.current.weathercode,
+        };
+        setCurrentWeather(parsedData);
+      } catch (error) {
+        setCurrentWeather(null);
+      }
     };
 
     fetchCurrentWeather();

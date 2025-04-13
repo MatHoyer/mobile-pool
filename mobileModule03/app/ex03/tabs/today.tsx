@@ -5,7 +5,7 @@ import { getDateAsString, weatherCodeToCondition } from '@/lib/utils';
 import { Wind } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, FlatList, SafeAreaView, View } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
+import { LineChart } from 'react-native-gifted-charts';
 
 type THourlyWeather = {
   hour: Date;
@@ -18,6 +18,7 @@ const TodayTab = () => {
   const location = useLocationStore((state) => state.location);
   const error = useLocationStore((state) => state.error);
   const [hourlyWeather, setHourlyWeather] = useState<THourlyWeather[]>([]);
+  const setError = useLocationStore((state) => state.setError);
   const graphContainerRef = useRef<View>(null);
   const [graphContainerPosition, setGraphContainerPosition] = useState<{
     x: number;
@@ -35,21 +36,27 @@ const TodayTab = () => {
     if (!location) return;
 
     const fetchHourlyWeather = async () => {
-      const weather = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&hourly=temperature_2m,wind_speed_10m,weathercode&forecast_days=1&timezone=Europe%2FParis`
-      );
-      const hourlyWeather = await weather.json();
-      console.log('Hourly weather', hourlyWeather);
-      const parsedData = hourlyWeather.hourly.time.map((time: string, index: number) => ({
-        hour: new Date(time),
-        temperature: hourlyWeather.hourly.temperature_2m[index],
-        windSpeed: hourlyWeather.hourly.wind_speed_10m[index],
-        weatherCode: hourlyWeather.hourly.weathercode[index],
-      }));
-      console.log('Hourly weather', parsedData);
-      setHourlyWeather(parsedData);
+      try {
+        const weather = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&hourly=temperature_2m,wind_speed_10m,weathercode&forecast_days=1&timezone=Europe%2FParis`
+        );
+        if (!weather.ok) {
+          throw new Error('Failed to fetch weather data');
+        }
+        const hourlyWeather = await weather.json();
+        console.log('Hourly weather', hourlyWeather);
+        const parsedData = hourlyWeather.hourly.time.map((time: string, index: number) => ({
+          hour: new Date(time),
+          temperature: hourlyWeather.hourly.temperature_2m[index],
+          windSpeed: hourlyWeather.hourly.wind_speed_10m[index],
+          weatherCode: hourlyWeather.hourly.weathercode[index],
+        }));
+        console.log('Hourly weather', parsedData);
+        setHourlyWeather(parsedData);
+      } catch (error) {
+        setError('Failed to fetch weather data');
+      }
     };
-
     fetchHourlyWeather();
   }, [location]);
 
@@ -99,36 +106,26 @@ const TodayTab = () => {
         }}
       >
         <LineChart
-          data={{
-            labels: hourlyWeather.map((item, index) =>
-              index % 4 === 0 ? getDateAsString({ date: item.hour, type: ['HOUR', 'MINUTE'], separator: ':' }) : ''
-            ),
-            datasets: [
-              {
-                data: hourlyWeather.map((item) => item.temperature),
-                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                strokeWidth: 2,
-              },
-            ],
-            legend: ['Temperature (°C)'],
-          }}
-          chartConfig={{
-            backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            decimalPlaces: 1,
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            style: {
-              borderRadius: 16,
-            },
-          }}
-          height={graphContainerPosition.height - 65}
-          width={graphContainerPosition.width - 20}
-          yAxisSuffix="°C"
-          style={{
-            borderRadius: 10,
-          }}
+          data={hourlyWeather.map((item) => ({
+            value: item.temperature,
+            dataPointText: `${item.temperature}°C`,
+            label: getDateAsString({ date: item.hour, type: ['HOUR'], separator: '' }),
+          }))}
+          curved
+          color="#FF6B6B"
+          startFillColor="rgba(255,107,107,0.2)"
+          endFillColor="rgba(255,107,107,0)"
+          spacing={Math.max(20, (graphContainerPosition.width - 80) / hourlyWeather.length)}
+          hideDataPoints={false}
+          dataPointsColor="#FF6B6B"
+          dataPointsRadius={4}
+          yAxisTextStyle={{ color: 'white' }}
+          showVerticalLines
+          verticalLinesColor="rgba(255,255,255,0.1)"
+          yAxisLabelWidth={40}
+          initialSpacing={20}
+          width={graphContainerPosition.width - 40}
+          height={graphContainerPosition.height - 40}
         />
       </View>
       <View
