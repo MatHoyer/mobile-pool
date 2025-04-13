@@ -55,10 +55,7 @@ const CurrentlyTab = () => {
           <Typography variant="h1">{currentWeather?.temperature}°</Typography>
         )}
         {currentWeather?.weatherCode !== undefined && (
-          <View style={{ flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-            <Typography>{React.createElement(weatherCodeToCondition(currentWeather?.weatherCode).icon)}</Typography>
-            <Typography variant="muted">{weatherCodeToCondition(currentWeather?.weatherCode).label}</Typography>
-          </View>
+          <Typography variant="muted">{weatherCodeToCondition(currentWeather.weatherCode).label}</Typography>
         )}
         <Typography variant="large">{location.name}</Typography>
         <View style={{ flexDirection: 'row', gap: 10 }}>

@@ -94,10 +94,7 @@ const WeeklyTab = () => {
               <Typography>{item.temperatureMax}°C</Typography>
             </View>
             <View style={{ width: '30%', alignItems: 'center' }}>
-              <View style={{ flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-                <Typography>{React.createElement(weatherCodeToCondition(item.weatherCode).icon)}</Typography>
-                <Typography variant="muted">{weatherCodeToCondition(item.weatherCode).label}</Typography>
-              </View>
+              <Typography variant="muted">{weatherCodeToCondition(item.weatherCode).label}</Typography>
             </View>
           </View>
         )}
