@@ -5,7 +5,7 @@ import { getDateAsString, weatherCodeToCondition } from '@/lib/utils';
 import { Wind } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, FlatList, SafeAreaView, View } from 'react-native';
-import { LineChart } from 'react-native-gifted-charts';
+import { LineChart } from 'react-native-chart-kit';
 
 type THourlyWeather = {
   hour: Date;
@@ -61,11 +61,19 @@ const TodayTab = () => {
   }, [location]);
 
   useEffect(() => {
-    graphContainerRef.current?.measureInWindow((x, y, width, height) => {
-      console.log('Graph container position', width, height);
-      setGraphContainerPosition({ x, y, width, height });
-    });
-  }, [graphContainerRef.current, Dimensions.get('window').width, Dimensions.get('window').height, location]);
+    const handleResize = () => {
+      graphContainerRef.current?.measureInWindow((x, y, width, height) => {
+        setGraphContainerPosition({ x, y, width, height });
+      });
+    };
+
+    const event = Dimensions.addEventListener('change', handleResize);
+    handleResize();
+
+    return () => {
+      event.remove();
+    };
+  }, [graphContainerRef.current, location, Dimensions.get('window').width, hourlyWeather.length]);
 
   if (!location) {
     return (
@@ -106,26 +114,41 @@ const TodayTab = () => {
         }}
       >
         <LineChart
-          data={hourlyWeather.map((item) => ({
-            value: item.temperature,
-            dataPointText: `${item.temperature}°C`,
-            label: getDateAsString({ date: item.hour, type: ['HOUR'], separator: '' }),
-          }))}
-          curved
-          color="#FF6B6B"
-          startFillColor="rgba(255,107,107,0.2)"
-          endFillColor="rgba(255,107,107,0)"
-          spacing={Math.max(20, (graphContainerPosition.width - 80) / hourlyWeather.length)}
-          hideDataPoints={false}
-          dataPointsColor="#FF6B6B"
-          dataPointsRadius={4}
-          yAxisTextStyle={{ color: 'white' }}
-          showVerticalLines
-          verticalLinesColor="rgba(255,255,255,0.1)"
-          yAxisLabelWidth={40}
-          initialSpacing={20}
-          width={graphContainerPosition.width - 40}
-          height={graphContainerPosition.height - 40}
+          data={{
+            labels:
+              hourlyWeather.length > 0
+                ? hourlyWeather.map((item, index) =>
+                    index % 4 === 0
+                      ? getDateAsString({ date: item.hour, type: ['HOUR', 'MINUTE'], separator: ':' })
+                      : ''
+                  )
+                : ['', ''],
+            datasets: [
+              {
+                data: hourlyWeather.length > 0 ? hourlyWeather.map((item) => item.temperature) : [0, 0],
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                strokeWidth: 2,
+              },
+            ],
+            legend: ['Temperature (°C)'],
+          }}
+          chartConfig={{
+            backgroundColor: '#ffffff',
+            backgroundGradientFrom: '#ffffff',
+            backgroundGradientTo: '#ffffff',
+            decimalPlaces: 1,
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            style: {
+              borderRadius: 10,
+            },
+          }}
+          height={graphContainerPosition.height - 65 > 0 ? graphContainerPosition.height - 65 : 0}
+          width={graphContainerPosition.width - 20 > 0 ? graphContainerPosition.width - 20 : 0}
+          yAxisSuffix="°C"
+          style={{
+            borderRadius: 10,
+          }}
         />
       </View>
       <View

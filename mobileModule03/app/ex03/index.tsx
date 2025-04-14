@@ -289,6 +289,7 @@ const TabLayout = () => {
           initialLayout={{ width: layout.width }}
           tabBarPosition="bottom"
           renderTabBar={(props) => <CustomTabbar {...props} />}
+          lazy
         />
       </ImageBackground>
 
