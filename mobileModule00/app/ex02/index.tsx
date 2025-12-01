@@ -1,6 +1,7 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { styles } from '../../assets/styles';
-import AppBar from '../../components/AppBar';
+import { styles } from "@/assets/styles";
+import AppBar from "@/components/AppBar";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const CalculatorButton: React.FC<{ label: string }> = ({ label }) => {
   return (
@@ -62,35 +63,35 @@ const calculatorStyles = StyleSheet.create({
   calculator: {
     flex: 1,
     marginTop: 10,
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
   },
   displayContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-end",
     gap: 10,
     marginRight: 10,
   },
 
   buttonsContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    backgroundColor: 'white',
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    backgroundColor: "white",
   },
   buttonRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
   },
   button: {
-    display: 'flex',
-    width: '20%',
+    display: "flex",
+    width: "20%",
     aspectRatio: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
