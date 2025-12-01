@@ -1,62 +1,71 @@
-import AppBar from '@/components/AppBar';
-import Button from '@/components/Button';
-import Input from '@/components/Input';
-import useLocationStore from '@/hooks/locationStore';
-import { Href, Tabs, usePathname, useRouter } from 'expo-router';
-import { Calendar, CalendarDays, Navigation, Search, Sun } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
-import { Dimensions, GestureResponderEvent, SafeAreaView, View } from 'react-native';
+import AppBar from "@/components/AppBar";
+import Button from "@/components/Button";
+import Input from "@/components/Input";
+import useLocationStore from "@/hooks/locationStore";
+import { Calendar, CalendarDays, LucideIcon, Navigation, Search, Sun } from "lucide-react-native";
+import { useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { TabView } from "react-native-tab-view";
+import CurrentlyTab from "./currently";
+import TodayTab from "./today";
+import WeeklyTab from "./weekly";
 
-const tabs = ['currently', 'today', 'weekly'];
+type TabRoute = { key: string; title: string; icon: LucideIcon };
 
 const TabLayout = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [touchStartX, setTouchStartX] = useState(0);
-  const pathname = usePathname();
-  const router = useRouter();
-  const width = Dimensions.get('window').width;
+  const layout = useWindowDimensions();
+  const [index, setIndex] = useState(0);
+  const routes: TabRoute[] = [
+    { key: "currently", title: "Currently", icon: Sun },
+    { key: "today", title: "Today", icon: Calendar },
+    { key: "weekly", title: "Weekly", icon: CalendarDays },
+  ];
 
-  const handleTouchStart = (event: GestureResponderEvent) => {
-    const { locationX } = event.nativeEvent;
-    setTouchStartX(locationX);
+  const renderScene = ({ route }: { route: TabRoute }) => {
+    switch (route.key) {
+      case "currently":
+        return <CurrentlyTab />;
+      case "today":
+        return <TodayTab />;
+      case "weekly":
+        return <WeeklyTab />;
+      default:
+        return null;
+    }
   };
 
-  const handleTouchEnd = (event: GestureResponderEvent) => {
-    const { locationX } = event.nativeEvent;
-    const index = Math.round((locationX - touchStartX) / width);
-    if (index === 0) return;
-    setActiveIndex((prev) => Math.max(0, Math.min(tabs.length - 1, prev - index)));
-  };
+  const renderTabBar = () => (
+    <View style={styles.tabBar}>
+      {routes.map((route, i) => {
+        const Icon = route.icon;
+        const isActive = index === i;
+        return (
+          <TouchableOpacity key={route.key} style={styles.tab} onPress={() => setIndex(i)}>
+            <Icon size={24} color={isActive ? "blue" : "gray"} />
+            <Text style={[styles.tabText, isActive && styles.tabTextActive]}>{route.title}</Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
 
-  useEffect(() => {
-    if (pathname.endsWith(tabs[activeIndex])) return;
-    const urlParts = pathname.split('/');
-    const url = urlParts.slice(0, -1).join('/');
-    router.push(`${url}/${tabs[activeIndex]}` as Href);
-  }, [activeIndex]);
-
-  const [searchLocation, setSearchLocation] = useState('');
+  const [searchLocation, setSearchLocation] = useState("");
   const setLocation = useLocationStore((state) => state.setLocation);
 
   const handleGeolocation = () => {
-    setLocation('Geolocation');
+    setLocation("Geolocation");
   };
 
   const handleSearch = (text: string) => {
     setLocation(text);
-    setSearchLocation('');
+    setSearchLocation("");
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-      }}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
+    <SafeAreaView style={{ flex: 1 }}>
       <AppBar>
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, gap: 10 }}>
+        <View style={{ flex: 1, flexDirection: "row", alignItems: "center", paddingHorizontal: 10, gap: 10 }}>
           <Search color="black" />
           <Input
             placeholder="Search"
@@ -65,7 +74,7 @@ const TabLayout = () => {
             value={searchLocation}
             onBlur={() => handleSearch(searchLocation)}
           />
-          <View style={{ width: 2, height: 20, backgroundColor: 'black' }} />
+          <View style={{ width: 2, height: 20, backgroundColor: "black" }} />
           <View style={{ width: 40 }}>
             <Button variant="ghost" onPress={handleGeolocation}>
               <Navigation color="black" />
@@ -73,19 +82,40 @@ const TabLayout = () => {
           </View>
         </View>
       </AppBar>
-      <Tabs screenOptions={{ tabBarActiveTintColor: 'blue', headerShown: false }}>
-        <Tabs.Screen
-          name="currently"
-          options={{
-            title: 'Currently',
-            tabBarIcon: () => <Sun />,
-          }}
-        />
-        <Tabs.Screen name="today" options={{ title: 'Today', tabBarIcon: () => <Calendar /> }} />
-        <Tabs.Screen name="weekly" options={{ title: 'Weekly', tabBarIcon: () => <CalendarDays /> }} />
-      </Tabs>
+      <TabView
+        navigationState={{ index, routes: routes as any }}
+        renderScene={({ route }) => renderScene({ route: route as unknown as TabRoute })}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width }}
+        tabBarPosition="bottom"
+        renderTabBar={renderTabBar}
+      />
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  tabBar: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0",
+  },
+  tab: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+  },
+  tabText: {
+    fontSize: 12,
+    marginTop: 4,
+    color: "gray",
+  },
+  tabTextActive: {
+    color: "blue",
+    fontWeight: "600",
+  },
+});
 
 export default TabLayout;

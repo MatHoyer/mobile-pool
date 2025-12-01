@@ -1,5 +1,6 @@
-import { styles } from '@/assets/styles';
-import { SafeAreaView, Text } from 'react-native';
+import { styles } from "@/assets/styles";
+import { Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const CurrentlyTab = () => {
   return (

@@ -1,6 +1,7 @@
-import { styles } from '@/assets/styles';
-import useLocationStore from '@/hooks/locationStore';
-import { SafeAreaView, Text } from 'react-native';
+import { styles } from "@/assets/styles";
+import useLocationStore from "@/hooks/locationStore";
+import { Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const CurrentlyTab = () => {
   const location = useLocationStore((state) => state.location);
