@@ -14,14 +14,15 @@ import WeeklyTab from "./weekly";
 
 type TabRoute = { key: string; title: string; icon: LucideIcon };
 
+const routes: TabRoute[] = [
+  { key: "currently", title: "Currently", icon: Sun },
+  { key: "today", title: "Today", icon: Calendar },
+  { key: "weekly", title: "Weekly", icon: CalendarDays },
+];
+
 const TabLayout = () => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
-  const routes: TabRoute[] = [
-    { key: "currently", title: "Currently", icon: Sun },
-    { key: "today", title: "Today", icon: Calendar },
-    { key: "weekly", title: "Weekly", icon: CalendarDays },
-  ];
 
   const renderScene = ({ route }: { route: TabRoute }) => {
     switch (route.key) {
@@ -63,18 +64,18 @@ const TabLayout = () => {
       return;
     }
 
-    const location = await Location.getCurrentPositionAsync({});
+    const location = await Location.getCurrentPositionAsync();
     const { coords } = location;
 
-    const address = await Location.reverseGeocodeAsync({
-      latitude: coords.latitude,
-      longitude: coords.longitude,
-    });
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.latitude}&lon=${coords.longitude}`
+    );
+    const data = await response.json();
 
     setLocation({
-      name: address[0]?.city ?? "",
-      region: address[0]?.region ?? "",
-      country: address[0]?.country ?? "",
+      name: data.address?.city || data.address?.town || data.address?.village || "",
+      region: data.address?.state || "",
+      country: data.address?.country || "",
       lat: coords.latitude,
       lon: coords.longitude,
     });
