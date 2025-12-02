@@ -13,14 +13,15 @@ import WeeklyTab from "./weekly";
 
 type TabRoute = { key: string; title: string; icon: LucideIcon };
 
+const routes: TabRoute[] = [
+  { key: "currently", title: "Currently", icon: Sun },
+  { key: "today", title: "Today", icon: Calendar },
+  { key: "weekly", title: "Weekly", icon: CalendarDays },
+];
+
 const TabLayout = () => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
-  const routes: TabRoute[] = [
-    { key: "currently", title: "Currently", icon: Sun },
-    { key: "today", title: "Today", icon: Calendar },
-    { key: "weekly", title: "Weekly", icon: CalendarDays },
-  ];
 
   const renderScene = ({ route }: { route: TabRoute }) => {
     switch (route.key) {
