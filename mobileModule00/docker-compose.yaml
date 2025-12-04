@@ -1,0 +1,14 @@
+services:
+  mobilemodule00:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    volumes:
+      - ./node_modules:/mobilemodule/node_modules
+      - ./app:/mobilemodule/app
+      - ./package.json:/mobilemodule/package.json
+      - ./components:/mobilemodule/components
+      - ./assets:/mobilemodule/assets
+    command: /bin/sh -c "pnpm install --frozen-lockfile && chmod 777 node_modules && pnpm start"
