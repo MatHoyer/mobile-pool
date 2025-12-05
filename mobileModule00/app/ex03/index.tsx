@@ -105,7 +105,6 @@ const Ex03 = () => {
       }
     }
 
-    console.log(tokens);
     setResult(calculatePostfix(toPostfix(tokens)));
   };
 
@@ -182,6 +181,7 @@ const Ex03 = () => {
             <CalculatorButton label="." onPress={() => handlePointPress()} />
             <CalculatorButton label="00" onPress={() => setExpression(expression + "00")} />
             <CalculatorButton label="=" onPress={() => handleCalculate(expression)} />
+            <View style={calculatorStyles.button} />
           </View>
         </View>
       </View>
@@ -208,7 +208,6 @@ const calculatorStyles = StyleSheet.create({
     marginRight: 10,
     maxWidth: "100%",
   },
-
   buttonsContainer: {
     display: "flex",
     flexDirection: "column",
@@ -218,11 +217,12 @@ const calculatorStyles = StyleSheet.create({
   buttonRow: {
     display: "flex",
     flexDirection: "row",
+    justifyContent: "center",
     width: "100%",
   },
   button: {
     display: "flex",
-    width: "20%",
+    width: 60,
     aspectRatio: 1,
     justifyContent: "center",
     alignItems: "center",

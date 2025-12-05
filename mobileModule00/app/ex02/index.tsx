@@ -50,6 +50,7 @@ const Ex02 = () => {
             <CalculatorButton label="." />
             <CalculatorButton label="00" />
             <CalculatorButton label="=" />
+            <View style={calculatorStyles.button} />
           </View>
         </View>
       </View>
@@ -75,7 +76,6 @@ const calculatorStyles = StyleSheet.create({
     gap: 10,
     marginRight: 10,
   },
-
   buttonsContainer: {
     display: "flex",
     flexDirection: "column",
@@ -85,11 +85,12 @@ const calculatorStyles = StyleSheet.create({
   buttonRow: {
     display: "flex",
     flexDirection: "row",
+    justifyContent: "center",
     width: "100%",
   },
   button: {
     display: "flex",
-    width: "20%",
+    width: 60,
     aspectRatio: 1,
     justifyContent: "center",
     alignItems: "center",

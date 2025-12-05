@@ -2,5 +2,7 @@ FROM node:22-alpine
 
 RUN corepack enable
 
-USER node
+WORKDIR /mobileModule
+
+COPY . .
 
