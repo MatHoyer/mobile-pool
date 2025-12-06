@@ -212,6 +212,7 @@ const calculatorStyles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     width: "100%",
+    height: "50%",
     backgroundColor: "white",
   },
   buttonRow: {
@@ -219,10 +220,11 @@ const calculatorStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     width: "100%",
+    height: "25%",
   },
   button: {
     display: "flex",
-    width: 60,
+    width: "20%",
     aspectRatio: 1,
     justifyContent: "center",
     alignItems: "center",
