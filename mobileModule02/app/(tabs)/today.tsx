@@ -2,53 +2,56 @@ import { styles } from "@/assets/styles";
 import Typography from "@/components/Typography";
 import useLocationStore from "@/hooks/locationStore";
 import { getDateAsString, weatherCodeToCondition } from "@/lib/utils";
-import { Calendar, ThermometerSnowflake, ThermometerSun } from "lucide-react-native";
-import { useEffect, useState } from "react";
-import { FlatList, SafeAreaView, View } from "react-native";
+import { Clock, Thermometer, Wind } from "lucide-react-native";
+import { useCallback, useEffect, useState } from "react";
+import { FlatList, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-type TDailyWeather = {
-  day: Date;
-  temperatureMax: number;
-  temperatureMin: number;
+type THourlyWeather = {
+  hour: Date;
+  temperature: number;
+  windSpeed: number;
   weatherCode: number;
 };
 
-const WeeklyTab = () => {
+const TodayTab = () => {
   const location = useLocationStore((state) => state.location);
-  const [dailyWeather, setDailyWeather] = useState<TDailyWeather[]>([]);
+  const error = useLocationStore((state) => state.error);
+  const setError = useLocationStore((state) => state.setError);
+  const [hourlyWeather, setHourlyWeather] = useState<THourlyWeather[]>([]);
 
-  useEffect(() => {
+  const fetchHourlyWeather = useCallback(async () => {
     if (!location) return;
 
-    const fetchDailyWeather = async () => {
-      try {
-        const weather = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&forecast_days=7&timezone=Europe%2FParis`
-        );
-        if (!weather.ok) {
-          throw new Error("Failed to fetch weather data");
-        }
-        const dailyWeather = await weather.json();
-        const parsedData = dailyWeather.daily.time.map((time: string, index: number) => ({
-          day: new Date(time),
-          temperatureMax: dailyWeather.daily.temperature_2m_max[index],
-          temperatureMin: dailyWeather.daily.temperature_2m_min[index],
-          weatherCode: dailyWeather.daily.weathercode[index],
-        }));
-        setDailyWeather(parsedData);
-      } catch {
-        setDailyWeather([]);
+    try {
+      const weather = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&hourly=temperature_2m,wind_speed_10m,weathercode&forecast_days=1&timezone=Europe%2FParis`
+      );
+      if (!weather.ok) {
+        throw new Error("Failed to fetch weather data");
       }
-    };
+      const hourlyWeather = await weather.json();
+      const parsedData = hourlyWeather.hourly.time.map((time: string, index: number) => ({
+        hour: new Date(time),
+        temperature: hourlyWeather.hourly.temperature_2m[index],
+        windSpeed: hourlyWeather.hourly.wind_speed_10m[index],
+        weatherCode: hourlyWeather.hourly.weathercode[index],
+      }));
+      setHourlyWeather(parsedData);
+    } catch {
+      setError("Failed to fetch weather data");
+    }
+  }, [location, setError]);
 
-    fetchDailyWeather();
-  }, [location]);
+  useEffect(() => {
+    void fetchHourlyWeather();
+  }, [fetchHourlyWeather]);
 
   if (!location) {
     return (
       <SafeAreaView style={styles.container}>
         <Typography variant="large" style={{ color: "red", textAlign: "center" }}>
-          Geolocation is not available, please enable it in your settings.
+          {error}
         </Typography>
       </SafeAreaView>
     );
@@ -73,29 +76,29 @@ const WeeklyTab = () => {
       </View>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
         <View style={{ width: "20%", alignItems: "center" }}>
-          <Calendar />
+          <Clock />
         </View>
         <View style={{ width: "20%", alignItems: "center" }}>
-          <ThermometerSnowflake />
+          <Thermometer />
         </View>
         <View style={{ width: "20%", alignItems: "center" }}>
-          <ThermometerSun />
+          <Wind />
         </View>
       </View>
       <View style={{ width: "95%", alignSelf: "center", height: 1, backgroundColor: "gray" }} />
       <FlatList
         style={{ flex: 1, width: "100%", alignSelf: "center", marginBottom: 50 }}
-        data={dailyWeather}
+        data={hourlyWeather}
         renderItem={({ item }) => (
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 10 }}>
             <View style={{ width: "20%", alignItems: "center" }}>
-              <Typography>{getDateAsString({ date: item.day, type: ["DAY", "MONTH"], separator: "/" })}</Typography>
+              <Typography>{getDateAsString({ date: item.hour, type: ["HOUR", "MINUTE"], separator: ":" })}</Typography>
             </View>
             <View style={{ width: "20%", alignItems: "center" }}>
-              <Typography>{item.temperatureMin}°C</Typography>
+              <Typography>{item.temperature}°C</Typography>
             </View>
             <View style={{ width: "20%", alignItems: "center" }}>
-              <Typography>{item.temperatureMax}°C</Typography>
+              <Typography>{item.windSpeed} km/h</Typography>
             </View>
             <View style={{ width: "30%", alignItems: "center" }}>
               <Typography>{weatherCodeToCondition(item.weatherCode)}</Typography>
@@ -107,4 +110,4 @@ const WeeklyTab = () => {
   );
 };
 
-export default WeeklyTab;
+export default TodayTab;
