@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 type LocationStore = {
   location: string;
@@ -6,7 +6,7 @@ type LocationStore = {
 };
 
 const useLocationStore = create<LocationStore>((set) => ({
-  location: '',
+  location: "",
   setLocation: (location: string) => set({ location }),
 }));
 
