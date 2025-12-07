@@ -125,6 +125,11 @@ export const SearchBar = () => {
     });
   }, [searchRef, isFocused]);
 
+  useEffect(() => {
+    if (!location) return;
+    setSearchLocation(location.name);
+  }, [location]);
+
   return (
     <>
       <Search color="black" />
@@ -138,7 +143,7 @@ export const SearchBar = () => {
         onChangeText={setSearchLocation}
         value={searchLocation}
         inputRef={searchRef}
-        onBlur={() => {
+        onBlur={async () => {
           if (touchingSuggestionRef.current) return;
 
           setTimeout(() => {
