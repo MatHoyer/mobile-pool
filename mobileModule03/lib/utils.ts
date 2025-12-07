@@ -35,7 +35,7 @@ const conditions = {
 
 export const weatherCodeToCondition = (code: number) => {
   return (
-    conditions[code as keyof typeof conditions] ?? {
+    conditions[code as keyof typeof conditions] || {
       label: "Unknown condition",
       icon: HelpCircle,
     }

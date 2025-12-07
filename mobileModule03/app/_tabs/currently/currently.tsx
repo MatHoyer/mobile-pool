@@ -3,7 +3,7 @@ import Typography from "@/components/Typography";
 import useLocationStore from "@/hooks/locationStore";
 import { weatherCodeToCondition } from "@/lib/utils";
 import { Wind } from "lucide-react-native";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -58,25 +58,42 @@ const CurrentlyTab = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        padding: 10,
+      }}
+    >
       <View style={{ flexDirection: "column", alignItems: "center", gap: 10 }}>
-        {currentWeather?.temperature !== undefined && (
-          <Typography variant="h1">{currentWeather?.temperature}°</Typography>
-        )}
-        {currentWeather?.weatherCode !== undefined && (
-          <Typography>{weatherCodeToCondition(currentWeather?.weatherCode)}</Typography>
-        )}
-        <Typography variant="large">{location.name}</Typography>
-        <View style={{ flexDirection: "row", gap: 10 }}>
+        <Typography variant="h1">{location.name}</Typography>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
           <Typography>{location.region}</Typography>
           <Typography>{location.country}</Typography>
         </View>
-        {currentWeather?.windSpeed !== undefined && (
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <Wind />
-            <Typography>{currentWeather?.windSpeed} km/h</Typography>
-          </View>
-        )}
+      </View>
+      <View style={styles.container}>
+        <View style={{ flexDirection: "column", alignItems: "center", gap: 10 }}>
+          {currentWeather?.temperature !== undefined && (
+            <Typography variant="h1">{currentWeather?.temperature}°</Typography>
+          )}
+          {currentWeather?.weatherCode !== undefined && (
+            <View style={{ flexDirection: "column", alignItems: "center", gap: 1 }}>
+              <Typography>
+                {React.createElement(weatherCodeToCondition(currentWeather.weatherCode).icon, { size: 50 })}
+              </Typography>
+              <Typography variant="muted">{weatherCodeToCondition(currentWeather.weatherCode).label}</Typography>
+            </View>
+          )}
+          {currentWeather?.windSpeed !== undefined && (
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <Wind />
+              <Typography>{currentWeather?.windSpeed} km/h</Typography>
+            </View>
+          )}
+        </View>
       </View>
     </SafeAreaView>
   );

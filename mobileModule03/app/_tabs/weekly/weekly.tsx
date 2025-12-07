@@ -1,18 +1,12 @@
 import { styles } from "@/assets/styles";
 import Typography from "@/components/Typography";
 import useLocationStore from "@/hooks/locationStore";
-import { getDateAsString, weatherCodeToCondition } from "@/lib/utils";
-import { Calendar, ThermometerSnowflake, ThermometerSun } from "lucide-react-native";
-import { useCallback, useEffect, useState } from "react";
-import { FlatList, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-type TDailyWeather = {
-  day: Date;
-  temperatureMax: number;
-  temperatureMin: number;
-  weatherCode: number;
-};
+import { DailyChart } from "./components/DailyChart";
+import { DailyList } from "./components/DailyList";
+import { TDailyWeather } from "./components/types";
 
 const WeeklyTab = () => {
   const location = useLocationStore((state) => state.location);
@@ -74,38 +68,8 @@ const WeeklyTab = () => {
           <Typography>{location.country}</Typography>
         </View>
       </View>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-        <View style={{ width: "20%", alignItems: "center" }}>
-          <Calendar />
-        </View>
-        <View style={{ width: "20%", alignItems: "center" }}>
-          <ThermometerSnowflake />
-        </View>
-        <View style={{ width: "20%", alignItems: "center" }}>
-          <ThermometerSun />
-        </View>
-      </View>
-      <View style={{ width: "95%", alignSelf: "center", height: 1, backgroundColor: "gray" }} />
-      <FlatList
-        style={{ flex: 1, width: "100%", alignSelf: "center", marginBottom: 50 }}
-        data={dailyWeather}
-        renderItem={({ item }) => (
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 10 }}>
-            <View style={{ width: "20%", alignItems: "center" }}>
-              <Typography>{getDateAsString({ date: item.day, type: ["DAY", "MONTH"], separator: "/" })}</Typography>
-            </View>
-            <View style={{ width: "20%", alignItems: "center" }}>
-              <Typography>{item.temperatureMin}°C</Typography>
-            </View>
-            <View style={{ width: "20%", alignItems: "center" }}>
-              <Typography>{item.temperatureMax}°C</Typography>
-            </View>
-            <View style={{ width: "30%", alignItems: "center" }}>
-              <Typography>{weatherCodeToCondition(item.weatherCode)}</Typography>
-            </View>
-          </View>
-        )}
-      />
+      <DailyChart dailyWeather={dailyWeather} />
+      <DailyList dailyWeather={dailyWeather} />
     </SafeAreaView>
   );
 };

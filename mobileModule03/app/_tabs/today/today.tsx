@@ -1,18 +1,12 @@
 import { styles } from "@/assets/styles";
 import Typography from "@/components/Typography";
 import useLocationStore from "@/hooks/locationStore";
-import { getDateAsString, weatherCodeToCondition } from "@/lib/utils";
-import { Clock, Thermometer, Wind } from "lucide-react-native";
-import { useCallback, useEffect, useState } from "react";
-import { FlatList, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-type THourlyWeather = {
-  hour: Date;
-  temperature: number;
-  windSpeed: number;
-  weatherCode: number;
-};
+import { HourlyChart } from "./components/HourlyChart";
+import { HourlyList } from "./components/HourlyList";
+import { THourlyWeather } from "./components/types";
 
 const TodayTab = () => {
   const location = useLocationStore((state) => state.location);
@@ -74,38 +68,8 @@ const TodayTab = () => {
           <Typography>{location.country}</Typography>
         </View>
       </View>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-        <View style={{ width: "20%", alignItems: "center" }}>
-          <Clock />
-        </View>
-        <View style={{ width: "20%", alignItems: "center" }}>
-          <Thermometer />
-        </View>
-        <View style={{ width: "20%", alignItems: "center" }}>
-          <Wind />
-        </View>
-      </View>
-      <View style={{ width: "95%", alignSelf: "center", height: 1, backgroundColor: "gray" }} />
-      <FlatList
-        style={{ flex: 1, width: "100%", alignSelf: "center", marginBottom: 50 }}
-        data={hourlyWeather}
-        renderItem={({ item }) => (
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 10 }}>
-            <View style={{ width: "20%", alignItems: "center" }}>
-              <Typography>{getDateAsString({ date: item.hour, type: ["HOUR", "MINUTE"], separator: ":" })}</Typography>
-            </View>
-            <View style={{ width: "20%", alignItems: "center" }}>
-              <Typography>{item.temperature}°C</Typography>
-            </View>
-            <View style={{ width: "20%", alignItems: "center" }}>
-              <Typography>{item.windSpeed} km/h</Typography>
-            </View>
-            <View style={{ width: "30%", alignItems: "center" }}>
-              <Typography>{weatherCodeToCondition(item.weatherCode)}</Typography>
-            </View>
-          </View>
-        )}
-      />
+      <HourlyChart hourlyWeather={hourlyWeather} />
+      <HourlyList hourlyWeather={hourlyWeather} />
     </SafeAreaView>
   );
 };
