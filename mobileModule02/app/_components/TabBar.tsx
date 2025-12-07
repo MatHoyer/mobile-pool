@@ -1,6 +1,6 @@
-import CurrentlyTab from "@/app/(tabs)/currently";
-import TodayTab from "@/app/(tabs)/today";
-import WeeklyTab from "@/app/(tabs)/weekly";
+import CurrentlyTab from "@/app/_tabs/currently";
+import TodayTab from "@/app/_tabs/today";
+import WeeklyTab from "@/app/_tabs/weekly";
 import { Calendar, CalendarDays, LucideIcon, Sun } from "lucide-react-native";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";

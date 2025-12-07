@@ -3,7 +3,7 @@ import TodayTab from "@/app/_tabs/today";
 import WeeklyTab from "@/app/_tabs/weekly";
 import { Calendar, CalendarDays, LucideIcon, Sun } from "lucide-react-native";
 import { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { TabView } from "react-native-tab-view";
 
 type TabRoute = { key: string; title: string; icon: LucideIcon };
@@ -47,14 +47,24 @@ export const TabBar = () => {
   );
 
   return (
-    <TabView
-      navigationState={{ index, routes: routes as any }}
-      renderScene={({ route }) => renderScene({ route: route as unknown as TabRoute })}
-      onIndexChange={setIndex}
-      initialLayout={{ width: layout.width }}
-      tabBarPosition="bottom"
-      renderTabBar={renderTabBar}
-    />
+    <ImageBackground
+      source={require("@/assets/images/background.png")}
+      resizeMode="cover"
+      style={{
+        flex: 1,
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      <TabView
+        navigationState={{ index, routes: routes as any }}
+        renderScene={({ route }) => renderScene({ route: route as unknown as TabRoute })}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width }}
+        tabBarPosition="bottom"
+        renderTabBar={renderTabBar}
+      />
+    </ImageBackground>
   );
 };
 
