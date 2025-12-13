@@ -91,7 +91,6 @@ export const SearchBar = () => {
       results: { name: string; admin1: string; country: string; latitude: number; longitude: number }[];
     };
     if (!jsonData?.results) {
-      setError("Could not find any result for the supplied adress or coordinates");
       setSuggestions([]);
       return;
     }
@@ -163,7 +162,6 @@ export const SearchBar = () => {
           }
 
           setError("Could not find any result for the supplied adress or coordinates");
-          setLocation(null);
         }}
         onFocus={() => setIsFocused(true)}
       />
