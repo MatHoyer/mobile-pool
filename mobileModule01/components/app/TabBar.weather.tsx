@@ -14,7 +14,7 @@ const routes: TabRoute[] = [
   { key: "weekly", title: "Weekly", icon: CalendarDays },
 ];
 
-export const TabBar = () => {
+export const WeathersTabBar = () => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
 

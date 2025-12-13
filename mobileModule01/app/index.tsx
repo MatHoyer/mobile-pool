@@ -1,12 +1,12 @@
+import { WeatherAppBar } from "@/components/app/AppBar.weather";
+import { WeathersTabBar } from "@/components/app/TabBar.weather";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TabBar } from "./_components/TabBar";
-import { WeatherAppBar } from "./_components/WeatherAppBar";
 
 const TabViewIndex = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <WeatherAppBar />
-      <TabBar />
+      <WeathersTabBar />
     </SafeAreaView>
   );
 };
