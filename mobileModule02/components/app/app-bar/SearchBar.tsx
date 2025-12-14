@@ -125,8 +125,7 @@ export const SearchBar = () => {
   }, [searchRef, isFocused]);
 
   useEffect(() => {
-    if (!location) return;
-    setSearchLocation(location.name);
+    setSearchLocation(location?.name || "");
   }, [location]);
 
   return (
