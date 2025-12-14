@@ -27,6 +27,11 @@ const typographyStyles = StyleSheet.create({
   muted: {
     color: "#666",
   },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+  },
 });
 
 const Typography: React.FC<{ variant?: keyof typeof typographyStyles } & ComponentProps<typeof Text>> = ({

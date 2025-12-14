@@ -7,7 +7,7 @@ const mainStyle = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 8,
     alignItems: "center",
-    width: "100%",
+    width: "auto",
   },
 });
 
@@ -17,6 +17,14 @@ const buttonStyles = StyleSheet.create({
   },
   ghost: {
     backgroundColor: "transparent",
+  },
+  outline: {
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: "#007AFF",
+  },
+  destructive: {
+    backgroundColor: "#FF3B30",
   },
 });
 
