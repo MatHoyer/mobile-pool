@@ -1,12 +1,12 @@
 import { styles } from "@/assets/styles";
+import HourlyChart from "@/components/tabs/today/HourlyChart";
+import HourlyList from "@/components/tabs/today/HourlyList";
+import { THourlyWeather } from "@/components/tabs/today/types";
 import Typography from "@/components/Typography";
 import useLocationStore from "@/hooks/locationStore";
 import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { HourlyChart } from "./components/HourlyChart";
-import { HourlyList } from "./components/HourlyList";
-import { THourlyWeather } from "./components/types";
 
 const TodayTab = () => {
   const location = useLocationStore((state) => state.location);

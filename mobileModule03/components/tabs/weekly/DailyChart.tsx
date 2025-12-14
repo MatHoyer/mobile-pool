@@ -5,7 +5,7 @@ import { Dimensions, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { TDailyWeather } from "./types";
 
-export const DailyChart: React.FC<{ dailyWeather: TDailyWeather[] }> = ({ dailyWeather }) => {
+const DailyChart: React.FC<{ dailyWeather: TDailyWeather[] }> = ({ dailyWeather }) => {
   const location = useLocationStore((state) => state.location);
   const graphContainerRef = useRef<View>(null);
   const [graphContainerPosition, setGraphContainerPosition] = useState<{
@@ -91,3 +91,5 @@ export const DailyChart: React.FC<{ dailyWeather: TDailyWeather[] }> = ({ dailyW
     </View>
   );
 };
+
+export default DailyChart;

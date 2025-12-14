@@ -1,12 +1,12 @@
 import { styles } from "@/assets/styles";
+import DailyChart from "@/components/tabs/weekly/DailyChart";
+import DailyList from "@/components/tabs/weekly/DailyList";
+import { TDailyWeather } from "@/components/tabs/weekly/types";
 import Typography from "@/components/Typography";
 import useLocationStore from "@/hooks/locationStore";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { DailyChart } from "./components/DailyChart";
-import { DailyList } from "./components/DailyList";
-import { TDailyWeather } from "./components/types";
 
 const WeeklyTab = () => {
   const location = useLocationStore((state) => state.location);

@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { LineChart } from "react-native-chart-kit";
 import { THourlyWeather } from "./types";
 
-export const HourlyChart: React.FC<{ hourlyWeather: THourlyWeather[] }> = ({ hourlyWeather }) => {
+const HourlyChart: React.FC<{ hourlyWeather: THourlyWeather[] }> = ({ hourlyWeather }) => {
   const location = useLocationStore((state) => state.location);
   const graphContainerRef = useRef<View>(null);
   const [graphContainerPosition, setGraphContainerPosition] = useState<{
@@ -87,3 +87,5 @@ export const HourlyChart: React.FC<{ hourlyWeather: THourlyWeather[] }> = ({ hou
     </View>
   );
 };
+
+export default HourlyChart;

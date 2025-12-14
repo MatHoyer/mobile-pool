@@ -1,6 +1,6 @@
+import { WeatherAppBar } from "@/components/app/app-bar/AppBar.weather";
+import { TabBar } from "@/components/app/TabBar.weather";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { WeatherAppBar } from "./_components/AppBar/WeatherAppBar";
-import { TabBar } from "./_components/TabBar";
 
 /**
  * display: "flex",

@@ -1,11 +1,10 @@
 import Typography from "@/components/Typography";
 import { getDateAsString, weatherCodeToCondition } from "@/lib/utils";
-import { Wind } from "lucide-react-native";
 import React from "react";
 import { FlatList, View } from "react-native";
-import { THourlyWeather } from "./types";
+import { TDailyWeather } from "./types";
 
-export const HourlyList: React.FC<{ hourlyWeather: THourlyWeather[] }> = ({ hourlyWeather }) => {
+const DailyList: React.FC<{ dailyWeather: TDailyWeather[] }> = ({ dailyWeather }) => {
   return (
     <View
       style={{
@@ -18,25 +17,24 @@ export const HourlyList: React.FC<{ hourlyWeather: THourlyWeather[] }> = ({ hour
     >
       <FlatList
         style={{ width: "100%", alignSelf: "center" }}
-        data={hourlyWeather}
+        data={dailyWeather}
         horizontal
         renderItem={({ item }) => (
-          <View style={{ flexDirection: "column", alignItems: "center", gap: 10, paddingHorizontal: 20 }}>
-            <Typography>{getDateAsString({ date: item.hour, type: ["HOUR", "MINUTE"], separator: ":" })}</Typography>
+          <View style={{ flexDirection: "column", alignItems: "center", gap: 10, paddingHorizontal: 10 }}>
+            <Typography>{getDateAsString({ date: item.day, type: ["DAY", "MONTH"], separator: "/" })}</Typography>
             <View style={{ flexDirection: "column", alignItems: "center", gap: 1 }}>
               <Typography>
                 {React.createElement(weatherCodeToCondition(item.weatherCode).icon, { size: 30 })}
               </Typography>
               <Typography variant="muted">{weatherCodeToCondition(item.weatherCode).label}</Typography>
             </View>
-            <Typography>{item.temperature}°C</Typography>
-            <View style={{ flexDirection: "row", gap: 10 }}>
-              <Wind />
-              <Typography>{item.windSpeed} km/h</Typography>
-            </View>
+            <Typography style={{ color: "red" }}>{item.temperatureMax}°C</Typography>
+            <Typography style={{ color: "blue" }}>{item.temperatureMin}°C</Typography>
           </View>
         )}
       />
     </View>
   );
 };
+
+export default DailyList;
