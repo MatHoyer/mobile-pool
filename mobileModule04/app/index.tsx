@@ -1,6 +1,6 @@
 import { styles } from "@/assets/styles";
 import Button from "@/components/Button";
-import PublicRoute from "@/components/route/PublicRoute";
+import PublicRoute from "@/components/routes/PublicRoute";
 import Typography from "@/components/Typography";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
