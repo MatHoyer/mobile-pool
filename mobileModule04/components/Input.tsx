@@ -1,4 +1,5 @@
-import { StyleSheet, TextInput, TextInputProps } from "react-native";
+import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
+import Typography from "./Typography";
 
 const inputStyles = StyleSheet.create({
   default: {
@@ -11,9 +12,23 @@ const inputStyles = StyleSheet.create({
 });
 
 const Input: React.FC<
-  { variant?: keyof typeof inputStyles; inputRef?: React.RefObject<TextInput | null> } & TextInputProps
-> = ({ variant = "default", style, inputRef, ...props }) => {
-  return <TextInput style={[inputStyles[variant], style]} placeholderTextColor="black" {...props} ref={inputRef} />;
+  { variant?: keyof typeof inputStyles; inputRef?: React.RefObject<TextInput | null>; error?: string } & TextInputProps
+> = ({ variant = "default", style, inputRef, error, ...props }) => {
+  return (
+    <View style={{ flexDirection: "column", gap: 1 }}>
+      <TextInput
+        style={[inputStyles[variant], style, !!error && { borderColor: "red" }]}
+        placeholderTextColor="black"
+        {...props}
+        ref={inputRef}
+      />
+      {!!error && (
+        <Typography variant="small" style={{ color: "red" }}>
+          {error}
+        </Typography>
+      )}
+    </View>
+  );
 };
 
 export default Input;

@@ -1,16 +1,15 @@
 import useLastDiariesStore from "@/hooks/lastDiariesStore";
 import { getDateAsString } from "@/lib/date.utils";
 import { TDiary } from "@/lib/diaries/diaries.types";
-import { TModalProps } from "@/lib/modal.utils";
 import { useState } from "react";
 import { View } from "react-native";
 import Button from "../Button";
-import { Dialog } from "../Dialog";
+import { Dialog, TDialogProps } from "../Dialog";
 import { SeparatorHorizontal, SeparatorVertical } from "../Separator";
 import Typography from "../Typography";
 import { getDiaryIcon } from "./Diary.icons";
 
-const DiaryDetailsModal: React.FC<{ diary: TDiary } & TModalProps> = ({ diary, visible, onClose }) => {
+const DiaryDetailsDialog: React.FC<{ diary: TDiary } & TDialogProps> = ({ diary, visible, onClose }) => {
   const { removeDiary } = useLastDiariesStore();
 
   const handleDelete = async () => {
@@ -33,9 +32,11 @@ const DiaryDetailsModal: React.FC<{ diary: TDiary } & TModalProps> = ({ diary, v
             separator: " ",
           })}
         </Typography>
-        <View style={{ flexDirection: "row", gap: 10 }}>
+        <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
           <Typography>My Feeling:</Typography>
-          {getDiaryIcon(diary.feeling)}
+          <View style={{ backgroundColor: "rgba(0,0,0,0.2)", padding: 10, borderRadius: 10 }}>
+            {getDiaryIcon(diary.feeling)}
+          </View>
         </View>
         <SeparatorHorizontal />
         <Typography variant="large">{diary.title}</Typography>
@@ -68,7 +69,7 @@ export const Diary: React.FC<{ diary: TDiary }> = ({ diary }) => {
       {getDiaryIcon(diary.feeling)}
       <SeparatorVertical />
       <Typography variant="large">{diary.title}</Typography>
-      <DiaryDetailsModal
+      <DiaryDetailsDialog
         diary={diary}
         visible={isDetailsModalVisible}
         onClose={() => setIsDetailsModalVisible(false)}

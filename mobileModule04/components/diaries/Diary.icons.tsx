@@ -1,7 +1,7 @@
 import { Angry, Frown, Laugh, Meh, Smile } from "lucide-react-native";
 import React from "react";
 
-const DiaryIcons = {
+export const DiaryIcons = {
   0: <Angry color="red" />,
   1: <Frown color="orange" />,
   2: <Meh color="yellow" />,
