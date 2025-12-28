@@ -1,14 +1,9 @@
-import useAuth from "@/hooks/useAuth";
 import { Redirect } from "expo-router";
 import { PropsWithChildren } from "react";
-import AppLoader from "../app/AppLoader";
+import { useAuth } from "../providers/auth.provider";
 
 const PublicRoute: React.FC<PropsWithChildren> = ({ children }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return <AppLoader />;
-  }
+  const { user } = useAuth();
 
   if (user) {
     return <Redirect href="/profile" />;

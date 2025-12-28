@@ -1,31 +1,27 @@
-import useAuth from "@/hooks/useAuth";
-import { TDiary } from "@/lib/diaries/diaries.types";
-import { getUserLastDiaries } from "@/lib/diaries/diaries.utils";
-import { useEffect, useState } from "react";
+import useLastDiariesStore from "@/hooks/lastDiariesStore";
+import { useEffect } from "react";
 import { FlatList, View } from "react-native";
+import { useAuth } from "../providers/auth.provider";
 import Typography from "../Typography";
 import { Diary } from "./Diary";
 
 export const Diaries = () => {
-  const [diaries, setDiaries] = useState<TDiary[]>([]);
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
+  const { lastDiaries, getLastDiaries } = useLastDiariesStore();
 
   useEffect(() => {
-    if (loading || !user?.email) return;
+    if (!user?.email) return;
 
-    const getDiaries = async () => {
-      const diaries = await getUserLastDiaries(user.email!);
-      setDiaries(diaries);
-    };
-
-    void getDiaries();
-  }, [loading, user]);
+    void getLastDiaries(user.email!);
+  }, [user, getLastDiaries]);
 
   return (
-    <View>
-      <Typography variant="large">Your last diary entries</Typography>
+    <View style={{ width: "100%", paddingHorizontal: 20, paddingVertical: 10, gap: 10 }}>
+      <Typography variant="large" style={{ textAlign: "center" }}>
+        Your last diary entries
+      </Typography>
       <FlatList
-        data={diaries}
+        data={lastDiaries}
         renderItem={({ item }) => <Diary diary={item} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ gap: 10 }}
