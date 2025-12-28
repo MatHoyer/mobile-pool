@@ -1,0 +1,78 @@
+import Profile from "@/app/_logged_tabs/profile";
+import { Calendar, LucideIcon, User } from "lucide-react-native";
+import { useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { TabView } from "react-native-tab-view";
+
+type TabRoute = { key: string; title: string; icon: LucideIcon };
+
+const routes: TabRoute[] = [
+  { key: "profile", title: "Profile", icon: User },
+  { key: "calendar", title: "Calendar", icon: Calendar },
+];
+
+export const DiaryTabBar = () => {
+  const layout = useWindowDimensions();
+  const [index, setIndex] = useState(0);
+
+  const renderScene = ({ route }: { route: TabRoute }) => {
+    switch (route.key) {
+      case "calendar":
+        return <Calendar />;
+      case "profile":
+        return <Profile />;
+      default:
+        return null;
+    }
+  };
+
+  const renderTabBar = () => (
+    <View style={styles.tabBar}>
+      {routes.map((route, i) => {
+        const Icon = route.icon;
+        const isActive = index === i;
+        return (
+          <TouchableOpacity key={route.key} style={styles.tab} onPress={() => setIndex(i)}>
+            <Icon size={24} color={isActive ? "blue" : "gray"} />
+            <Text style={[styles.tabText, isActive && styles.tabTextActive]}>{route.title}</Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+
+  return (
+    <TabView
+      navigationState={{ index, routes: routes as any }}
+      renderScene={({ route }) => renderScene({ route: route as unknown as TabRoute })}
+      onIndexChange={setIndex}
+      initialLayout={{ width: layout.width }}
+      tabBarPosition="bottom"
+      renderTabBar={renderTabBar}
+    />
+  );
+};
+
+const styles = StyleSheet.create({
+  tabBar: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0",
+  },
+  tab: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+  },
+  tabText: {
+    fontSize: 12,
+    marginTop: 4,
+    color: "gray",
+  },
+  tabTextActive: {
+    color: "blue",
+    fontWeight: "600",
+  },
+});
