@@ -27,7 +27,7 @@ const DiaryDetailsDialog: React.FC<{ diary: TDiary } & TDialogProps> = ({ diary,
         <Typography variant="large" style={{ fontSize: 18 }}>
           {getDateAsString({
             date: diary.date,
-            type: ["DAY_IN_LETTER"],
+            type: "DAY_IN_LETTER",
           })}
           {", "}
           {getDateAsString({
@@ -43,7 +43,13 @@ const DiaryDetailsDialog: React.FC<{ diary: TDiary } & TDialogProps> = ({ diary,
           </View>
         </View>
         <SeparatorHorizontal />
-        <Typography variant="large">{diary.title}</Typography>
+        <Typography
+          variant="large"
+          style={{ textOverflow: "ellipsis", overflow: "hidden", maxWidth: "100%" }}
+          numberOfLines={1}
+        >
+          {diary.title}
+        </Typography>
         <Typography>{diary.content}</Typography>
         <Button variant="destructive" onPress={handleDelete}>
           <Typography variant="buttonText">Delete</Typography>
@@ -57,27 +63,39 @@ export const Diary: React.FC<{ diary: TDiary }> = ({ diary }) => {
   const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
 
   return (
-    <Button
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        gap: 5,
-        alignItems: "center",
-        borderRadius: 10,
-        padding: 10,
-        backgroundColor: "rgba(0,0,0,0.2)",
-      }}
-      onPress={() => setIsDetailsModalVisible(true)}
-    >
-      <Typography>{getDateAsString({ date: diary.date, type: ["DAY", "MONTH", "YEAR"], separator: "/" })}</Typography>
-      {getDiaryIcon(diary.feeling)}
-      <SeparatorVertical />
-      <Typography variant="large">{diary.title}</Typography>
+    <>
+      <Button
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: 10,
+          alignItems: "center",
+          borderRadius: 10,
+          padding: 10,
+          backgroundColor: "rgba(0,0,0,0.2)",
+        }}
+        onPress={() => setIsDetailsModalVisible(true)}
+      >
+        <View style={{ flexDirection: "column", gap: 1, alignItems: "center", width: "25%" }}>
+          <Typography>{getDateAsString({ date: diary.date, type: "DAY" })}</Typography>
+          <Typography>{getDateAsString({ date: diary.date, type: "MONTH_IN_LETTER" })}</Typography>
+          <Typography>{getDateAsString({ date: diary.date, type: "YEAR" })}</Typography>
+        </View>
+        {getDiaryIcon(diary.feeling)}
+        <SeparatorVertical />
+        <Typography
+          variant="large"
+          style={{ textOverflow: "ellipsis", overflow: "hidden", maxWidth: "50%" }}
+          numberOfLines={1}
+        >
+          {diary.title}
+        </Typography>
+      </Button>
       <DiaryDetailsDialog
         diary={diary}
         visible={isDetailsModalVisible}
         onClose={() => setIsDetailsModalVisible(false)}
       />
-    </Button>
+    </>
   );
 };
