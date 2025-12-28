@@ -20,12 +20,18 @@ export const Diaries = () => {
       <Typography variant="large" style={{ textAlign: "center" }}>
         Your last diary entries
       </Typography>
-      <FlatList
-        data={lastDiaries}
-        renderItem={({ item }) => <Diary diary={item} />}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ gap: 10 }}
-      />
+      {lastDiaries.length > 0 ? (
+        <FlatList
+          data={lastDiaries}
+          renderItem={({ item }) => <Diary diary={item} />}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ gap: 10 }}
+        />
+      ) : (
+        <Typography variant="muted" style={{ textAlign: "center" }}>
+          No diary entries found
+        </Typography>
+      )}
     </View>
   );
 };

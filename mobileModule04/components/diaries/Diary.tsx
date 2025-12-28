@@ -5,15 +5,19 @@ import { useState } from "react";
 import { View } from "react-native";
 import Button from "../Button";
 import { Dialog, TDialogProps } from "../Dialog";
+import { useAuth } from "../providers/auth.provider";
 import { SeparatorHorizontal, SeparatorVertical } from "../Separator";
 import Typography from "../Typography";
 import { getDiaryIcon } from "./Diary.icons";
 
 const DiaryDetailsDialog: React.FC<{ diary: TDiary } & TDialogProps> = ({ diary, visible, onClose }) => {
+  const { user } = useAuth();
   const { removeDiary } = useLastDiariesStore();
 
   const handleDelete = async () => {
-    await removeDiary(diary.id);
+    if (!user?.email) return;
+
+    await removeDiary(diary.id, user.email);
     onClose();
   };
 

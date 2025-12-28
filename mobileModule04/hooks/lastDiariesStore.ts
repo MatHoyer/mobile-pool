@@ -8,30 +8,30 @@ export type TLastDiariesStore = {
   lastDiaries: TDiary[];
   getLastDiaries: (userEmail: string) => Promise<void>;
   addDiary: (diary: Omit<TDiary, "id">) => Promise<void>;
-  removeDiary: (id: TDiary["id"]) => Promise<void>;
+  removeDiary: (id: TDiary["id"], userEmail: string) => Promise<void>;
+};
+
+const getLastDiaries = async (userEmail: string) => {
+  const q = query(collection(db, "diaries"), where("email", "==", userEmail), orderBy("date", "desc"), limit(5));
+  const docs = await getDocs(q);
+  return docs.docs.map((doc) => toDiary(doc));
 };
 
 const useLastDiariesStore = create<TLastDiariesStore>((set) => ({
   lastDiaries: [],
   getLastDiaries: async (userEmail: string) => {
-    const q = query(collection(db, "diaries"), where("email", "==", userEmail), orderBy("date", "desc"), limit(5));
-    const docs = await getDocs(q);
-    set({ lastDiaries: docs.docs.map((doc) => toDiary(doc)) });
+    const lastDiaries = await getLastDiaries(userEmail);
+    set({ lastDiaries });
   },
   addDiary: async (diary: Omit<TDiary, "id">) => {
-    const docRef = await addDoc(collection(db, "diaries"), diary);
-    const newDiary = {
-      id: docRef.id,
-      ...diary,
-    };
-
-    set((state) => ({
-      lastDiaries: [...state.lastDiaries, newDiary].sort((a, b) => b.date.getTime() - a.date.getTime()),
-    }));
+    await addDoc(collection(db, "diaries"), diary);
+    const lastDiaries = await getLastDiaries(diary.email);
+    set({ lastDiaries });
   },
-  removeDiary: async (id: TDiary["id"]) => {
+  removeDiary: async (id: TDiary["id"], userEmail: string) => {
     await deleteDoc(doc(db, "diaries", id));
-    set((state) => ({ lastDiaries: state.lastDiaries.filter((diary) => diary.id !== id) }));
+    const lastDiaries = await getLastDiaries(userEmail);
+    set({ lastDiaries });
   },
 }));
 
