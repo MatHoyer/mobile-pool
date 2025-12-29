@@ -1,28 +1,21 @@
-import useLastDiariesStore from "@/hooks/lastDiariesStore";
-import { useEffect } from "react";
+import { TDiary } from "@/lib/diaries/diaries.types";
 import { FlatList, View } from "react-native";
-import { useAuth } from "../providers/auth.provider";
 import Typography from "../Typography";
 import { Diary } from "./Diary";
 
-export const Diaries = () => {
-  const { user } = useAuth();
-  const { lastDiaries, getLastDiaries } = useLastDiariesStore();
+type TDiariesProps = {
+  diaries: TDiary[];
+};
 
-  useEffect(() => {
-    if (!user?.email) return;
-
-    void getLastDiaries(user.email!);
-  }, [user, getLastDiaries]);
-
+export const Diaries: React.FC<TDiariesProps> = ({ diaries }) => {
   return (
     <View style={{ width: "100%", paddingHorizontal: 20, paddingVertical: 10, gap: 10 }}>
       <Typography variant="large" style={{ textAlign: "center" }}>
         Your last diary entries
       </Typography>
-      {lastDiaries.length > 0 ? (
+      {diaries.length > 0 ? (
         <FlatList
-          data={lastDiaries}
+          data={diaries}
           renderItem={({ item }) => <Diary diary={item} />}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ gap: 10 }}

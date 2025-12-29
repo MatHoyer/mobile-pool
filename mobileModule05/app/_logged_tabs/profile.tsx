@@ -1,4 +1,3 @@
-import { styles } from "@/assets/styles";
 import Button from "@/components/Button";
 import { Dialog, TDialogProps } from "@/components/Dialog";
 import { Diaries } from "@/components/diaries/Diaries";
@@ -9,7 +8,8 @@ import PrivateRoute from "@/components/routes/PrivateRoute";
 import Typography from "@/components/Typography";
 import useLastDiariesStore from "@/hooks/lastDiariesStore";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { Image } from "expo-image";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -105,21 +105,60 @@ const CreateDiaryDialog: React.FC<TDialogProps> = ({ visible, onClose }) => {
   );
 };
 
+const blurhash =
+  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
+const ProfileGestion = () => {
+  const { user } = useAuth();
+  console.log(user?.photoURL);
+
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+      <Image
+        source={user?.photoURL ?? ""}
+        style={{ width: 100, height: 100, borderRadius: 50 }}
+        contentFit="cover"
+        placeholder={{ blurhash }}
+      />
+      <Typography variant="large">{user?.displayName}</Typography>
+    </View>
+  );
+};
+
+// do a card component
+const Stats = () => {
+  return (
+    <View>
+      <Typography variant="large">Stats</Typography>
+    </View>
+  );
+};
+
 const Profile = () => {
+  const { user } = useAuth();
+
+  const { lastDiaries, getLastDiaries } = useLastDiariesStore();
+
+  useEffect(() => {
+    if (!user?.email) return;
+
+    void getLastDiaries(user.email!);
+  }, [user, getLastDiaries]);
+
   const [isCreateDiaryDialogVisible, setIsCreateDiaryDialogVisible] = useState(false);
 
   return (
     <SafeAreaView
       style={{
-        ...styles.container,
+        alignItems: "center",
         flexDirection: "column",
-        justifyContent: "space-between",
         gap: 10,
         paddingVertical: 20,
       }}
     >
       <PrivateRoute>
-        <Diaries />
+        <ProfileGestion />
+        <Diaries diaries={lastDiaries} />
         <Button
           onPress={() => {
             setIsCreateDiaryDialogVisible(true);
