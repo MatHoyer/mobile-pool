@@ -1,22 +1,22 @@
-import { ComponentProps } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { ComponentProps } from "react";
+import { StyleSheet, Text } from "react-native";
 
 const typographyStyles = StyleSheet.create({
   default: {
     fontSize: 16,
-    fontWeight: 'normal',
+    fontWeight: "normal",
   },
   large: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   h1: {
     fontSize: 48,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   h2: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   h3: {
     fontSize: 24,
@@ -25,12 +25,12 @@ const typographyStyles = StyleSheet.create({
     fontSize: 12,
   },
   muted: {
-    color: '#666',
+    color: "#666",
   },
 });
 
 const Typography: React.FC<{ variant?: keyof typeof typographyStyles } & ComponentProps<typeof Text>> = ({
-  variant = 'default',
+  variant = "default",
   style,
   ...props
 }) => {

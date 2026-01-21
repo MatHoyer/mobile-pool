@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, TextInputProps } from 'react-native';
+import { StyleSheet, TextInput, TextInputProps } from "react-native";
 
 const inputStyles = StyleSheet.create({
   default: {
@@ -6,11 +6,12 @@ const inputStyles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
+    color: "black",
   },
 });
 
 const Input: React.FC<{ variant?: keyof typeof inputStyles } & TextInputProps> = ({
-  variant = 'default',
+  variant = "default",
   style,
   ...props
 }) => {

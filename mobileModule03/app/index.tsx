@@ -1,45 +1,22 @@
-import Button from '@/components/Button';
-import Typography from '@/components/Typography';
-import { router } from 'expo-router';
-import { SafeAreaView, Text, View } from 'react-native';
-import { styles } from '../assets/styles';
+import { WeatherAppBar } from "@/components/app/app-bar/AppBar.weather";
+import { TabBar } from "@/components/app/TabBar.weather";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const Index = () => {
-  const exercises = [
-    {
-      title: 'Exercise 00',
-      href: '../ex00',
-    },
-    {
-      title: 'Exercise 01',
-      href: '../ex01',
-    },
-    {
-      title: 'Exercise 02',
-      href: '../ex02',
-    },
-    {
-      title: 'Exercise 03',
-      href: '../ex03',
-    },
-    {
-      title: 'Exercise 04',
-      href: '../ex04',
-    },
-  ] as const;
+/**
+ * display: "flex",
+ * flexDirection: "column-reverse"
+ *
+ * This is to ensure that the tab bar is always at the bottom of the screen, regardless of the content of the screen.
+ * And we need to put the weather app bar above the tab bar. because react native tab render catch the click otherwise.
+ */
 
+const TabViewIndex = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={[styles.columnContainer, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Typography variant="large">Mobile Module 03</Typography>
-        {exercises.map((exercise) => (
-          <Button onPress={() => router.push(exercise.href)} key={exercise.title}>
-            <Text style={styles.buttonText}>{exercise.title}</Text>
-          </Button>
-        ))}
-      </View>
+    <SafeAreaView style={{ flex: 1, display: "flex", flexDirection: "column-reverse" }}>
+      <TabBar />
+      <WeatherAppBar />
     </SafeAreaView>
   );
 };
 
-export default Index;
+export default TabViewIndex;

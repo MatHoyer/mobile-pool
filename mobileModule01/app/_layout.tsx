@@ -1,13 +1,13 @@
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { Stack } from "expo-router";
+import { StatusBar } from "react-native";
 
-const RootLayout = () => {
+const TabLayout = () => {
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar barStyle="dark-content" />
       <Stack screenOptions={{ headerShown: false }} />
     </>
   );
 };
 
-export default RootLayout;
+export default TabLayout;
