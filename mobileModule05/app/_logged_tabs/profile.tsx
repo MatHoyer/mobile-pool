@@ -159,6 +159,7 @@ const Profile = () => {
       <PrivateRoute>
         <ProfileGestion />
         <Diaries diaries={lastDiaries} />
+        <Stats />
         <Button
           onPress={() => {
             setIsCreateDiaryDialogVisible(true);

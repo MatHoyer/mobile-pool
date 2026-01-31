@@ -7,25 +7,28 @@ import { create } from "zustand";
 const DEFAULT_DIARIES_LIMIT = 2;
 
 export type TLastDiariesStore = {
+  allDiaries: TDiary[];
   lastDiaries: TDiary[];
+  getAllDiaries: (userEmail: string) => Promise<void>;
   getLastDiaries: (userEmail: string) => Promise<void>;
   addDiary: (diary: Omit<TDiary, "id">) => Promise<void>;
   removeDiary: (id: TDiary["id"], userEmail: string) => Promise<void>;
 };
 
-const getLastDiaries = async (userEmail: string) => {
-  const q = query(
-    collection(db, "diaries"),
-    where("email", "==", userEmail),
-    orderBy("date", "desc"),
-    limit(DEFAULT_DIARIES_LIMIT)
-  );
+const getLastDiaries = async (userEmail: string, max: number = DEFAULT_DIARIES_LIMIT) => {
+  const q = query(collection(db, "diaries"), where("email", "==", userEmail), orderBy("date", "desc"), limit(max));
   const docs = await getDocs(q);
   return docs.docs.map((doc) => toDiary(doc));
 };
 
 const useLastDiariesStore = create<TLastDiariesStore>((set) => ({
+  allDiaries: [],
   lastDiaries: [],
+  getAllDiaries: async (userEmail: string) => {
+    const allDiaries = await getLastDiaries(userEmail);
+
+    set({ allDiaries });
+  },
   getLastDiaries: async (userEmail: string) => {
     const lastDiaries = await getLastDiaries(userEmail);
     set({ lastDiaries });
