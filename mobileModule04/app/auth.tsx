@@ -11,21 +11,28 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const githubProvider = new GithubAuthProvider();
 const googleProvider = new GoogleAuthProvider();
 
+const signIn = async (provider: GoogleAuthProvider | GithubAuthProvider) => {
+  try {
+    await signInWithPopup(getAuth(), provider);
+    router.push("/");
+  } catch {
+    console.log("Popup closed");
+  }
+};
+
 const LoginButtons = () => {
   return (
     <View style={{ ...styles.container, flexDirection: "column", gap: 10 }}>
       <Button
-        onPress={() => {
-          signInWithPopup(getAuth(), githubProvider);
-          router.push("/");
+        onPress={async () => {
+          await signIn(githubProvider);
         }}
       >
         <Typography variant="buttonText">Login with Github</Typography>
       </Button>
       <Button
-        onPress={() => {
-          signInWithPopup(getAuth(), googleProvider);
-          router.push("/");
+        onPress={async () => {
+          await signIn(googleProvider);
         }}
       >
         <Typography variant="buttonText">Login with Google</Typography>
