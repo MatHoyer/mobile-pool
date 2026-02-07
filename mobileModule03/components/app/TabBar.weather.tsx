@@ -1,6 +1,7 @@
 import CurrentlyTab from "@/app/_tabs/currently";
 import TodayTab from "@/app/_tabs/today";
 import WeeklyTab from "@/app/_tabs/weekly";
+import useSwipeStore from "@/hooks/swipeStore";
 import { Calendar, CalendarDays, LucideIcon, Sun } from "lucide-react-native";
 import { useState } from "react";
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
@@ -17,6 +18,8 @@ const routes: TabRoute[] = [
 export const TabBar = () => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
+
+  const isSwipeEnable = useSwipeStore((state) => state.isSwipeEnabled);
 
   const renderScene = ({ route }: { route: TabRoute }) => {
     switch (route.key) {
@@ -63,6 +66,7 @@ export const TabBar = () => {
         initialLayout={{ width: layout.width }}
         tabBarPosition="bottom"
         renderTabBar={renderTabBar}
+        swipeEnabled={isSwipeEnable}
       />
     </ImageBackground>
   );

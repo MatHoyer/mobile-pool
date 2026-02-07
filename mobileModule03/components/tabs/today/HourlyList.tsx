@@ -1,8 +1,9 @@
+import { BlockingFlatList } from "@/components/BlockingFlatList";
 import Typography from "@/components/Typography";
 import { getDateAsString, weatherCodeToCondition } from "@/lib/utils";
 import { Wind } from "lucide-react-native";
 import React from "react";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
 import { THourlyWeather } from "./types";
 
 const HourlyList: React.FC<{ hourlyWeather: THourlyWeather[] }> = ({ hourlyWeather }) => {
@@ -16,7 +17,7 @@ const HourlyList: React.FC<{ hourlyWeather: THourlyWeather[] }> = ({ hourlyWeath
         marginBottom: 10,
       }}
     >
-      <FlatList
+      <BlockingFlatList
         style={{ width: "100%", alignSelf: "center" }}
         data={hourlyWeather}
         horizontal

@@ -1,7 +1,8 @@
+import { BlockingFlatList } from "@/components/BlockingFlatList";
 import Typography from "@/components/Typography";
 import { getDateAsString, weatherCodeToCondition } from "@/lib/utils";
 import React from "react";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
 import { TDailyWeather } from "./types";
 
 const DailyList: React.FC<{ dailyWeather: TDailyWeather[] }> = ({ dailyWeather }) => {
@@ -15,7 +16,7 @@ const DailyList: React.FC<{ dailyWeather: TDailyWeather[] }> = ({ dailyWeather }
         marginBottom: 10,
       }}
     >
-      <FlatList
+      <BlockingFlatList
         style={{ width: "100%", alignSelf: "center" }}
         data={dailyWeather}
         horizontal
