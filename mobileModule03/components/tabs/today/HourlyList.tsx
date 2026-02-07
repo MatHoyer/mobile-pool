@@ -22,7 +22,7 @@ const HourlyList: React.FC<{ hourlyWeather: THourlyWeather[] }> = ({ hourlyWeath
         data={hourlyWeather}
         horizontal
         renderItem={({ item }) => (
-          <View style={{ flexDirection: "column", alignItems: "center", gap: 10, paddingHorizontal: 20 }}>
+          <View style={{ flexDirection: "column", alignItems: "center", gap: 10, paddingHorizontal: 20, width: 200 }}>
             <Typography>{getDateAsString({ date: item.hour, type: ["HOUR", "MINUTE"], separator: ":" })}</Typography>
             <View style={{ flexDirection: "column", alignItems: "center", gap: 1 }}>
               <Typography>

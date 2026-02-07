@@ -21,7 +21,7 @@ const DailyList: React.FC<{ dailyWeather: TDailyWeather[] }> = ({ dailyWeather }
         data={dailyWeather}
         horizontal
         renderItem={({ item }) => (
-          <View style={{ flexDirection: "column", alignItems: "center", gap: 10, paddingHorizontal: 10 }}>
+          <View style={{ flexDirection: "column", alignItems: "center", gap: 10, paddingHorizontal: 10, width: 200 }}>
             <Typography>{getDateAsString({ date: item.day, type: ["DAY", "MONTH"], separator: "/" })}</Typography>
             <View style={{ flexDirection: "column", alignItems: "center", gap: 1 }}>
               <Typography>
