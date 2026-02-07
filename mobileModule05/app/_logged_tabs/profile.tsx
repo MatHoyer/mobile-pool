@@ -1,7 +1,8 @@
 import Button from "@/components/Button";
+import { Card } from "@/components/Card";
 import { Dialog, TDialogProps } from "@/components/Dialog";
 import { Diaries } from "@/components/diaries/Diaries";
-import { DiaryIcons, getDiaryIcon } from "@/components/diaries/Diary.icons";
+import { DiaryIcons, getDiaryIcon, isFeeling } from "@/components/diaries/Diary.icons";
 import Input from "@/components/Input";
 import { useAuth } from "@/components/providers/auth.provider";
 import PrivateRoute from "@/components/routes/PrivateRoute";
@@ -19,13 +20,12 @@ const FeelingSelector: React.FC<{ value: number; onChange: (value: number) => vo
   return (
     <View style={{ flexDirection: "column", gap: 10 }}>
       <Typography variant="large">Feeling</Typography>
-      <View
+      <Card
         style={{
           flexDirection: "row",
           gap: 0,
           padding: 1,
-          borderRadius: 10,
-          backgroundColor: "rgba(0,0,0,0.2)",
+          justifyContent: "center",
         }}
       >
         {Object.keys(DiaryIcons)
@@ -35,7 +35,7 @@ const FeelingSelector: React.FC<{ value: number; onChange: (value: number) => vo
               {getDiaryIcon(item)}
             </Button>
           ))}
-      </View>
+      </Card>
     </View>
   );
 };
@@ -125,25 +125,67 @@ const ProfileGestion = () => {
   );
 };
 
-// do a card component
 const Stats = () => {
+  const { allDiaries } = useLastDiariesStore();
+
+  const stats = allDiaries.reduce(
+    (stats, diary) => {
+      const index = diary.feeling;
+      if (!isFeeling(index)) return stats;
+
+      const newStats = { ...stats, [index]: stats[index] + 1 };
+      return newStats;
+    },
+    {
+      0: 0,
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+    },
+  );
+
   return (
-    <View>
-      <Typography variant="large">Stats</Typography>
-    </View>
+    <Card style={{ width: "90%" }}>
+      <Typography variant="large" style={{ textAlign: "center" }}>
+        Stats
+      </Typography>
+      <Card
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+        }}
+      >
+        {Object.entries(stats).map(([index, value]) => {
+          return (
+            <View
+              key={index}
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 10,
+              }}
+            >
+              {getDiaryIcon(Number(index))} {(100 * value) / allDiaries.length}%
+            </View>
+          );
+        })}
+      </Card>
+    </Card>
   );
 };
 
 const Profile = () => {
   const { user } = useAuth();
 
-  const { lastDiaries, getLastDiaries } = useLastDiariesStore();
+  const { lastDiaries, getDiaries } = useLastDiariesStore();
 
   useEffect(() => {
     if (!user?.email) return;
 
-    void getLastDiaries(user.email!);
-  }, [user, getLastDiaries]);
+    void getDiaries(user.email);
+  }, [user, getDiaries]);
 
   const [isCreateDiaryDialogVisible, setIsCreateDiaryDialogVisible] = useState(false);
 

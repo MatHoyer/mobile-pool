@@ -4,6 +4,7 @@ import { TDiary } from "@/lib/diaries/diaries.types";
 import { useState } from "react";
 import { View } from "react-native";
 import Button from "../Button";
+import { Card } from "../Card";
 import { Dialog, TDialogProps } from "../Dialog";
 import { useAuth } from "../providers/auth.provider";
 import { SeparatorHorizontal, SeparatorVertical } from "../Separator";
@@ -38,9 +39,7 @@ const DiaryDetailsDialog: React.FC<{ diary: TDiary } & TDialogProps> = ({ diary,
         </Typography>
         <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
           <Typography>My Feeling:</Typography>
-          <View style={{ backgroundColor: "rgba(0,0,0,0.2)", padding: 10, borderRadius: 10 }}>
-            {getDiaryIcon(diary.feeling)}
-          </View>
+          <Card>{getDiaryIcon(diary.feeling)}</Card>
         </View>
         <SeparatorHorizontal />
         <Typography
