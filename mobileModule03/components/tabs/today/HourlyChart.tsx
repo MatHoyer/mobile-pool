@@ -1,31 +1,16 @@
 import { Dimensions, View } from "react-native";
 
-import useLocationStore from "@/hooks/locationStore";
 import { getDateAsString } from "@/lib/utils";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LineChart } from "react-native-chart-kit";
 import { THourlyWeather } from "./types";
 
 const HourlyChart: React.FC<{ hourlyWeather: THourlyWeather[] }> = ({ hourlyWeather }) => {
-  const location = useLocationStore((state) => state.location);
-  const graphContainerRef = useRef<View>(null);
-  const [graphContainerPosition, setGraphContainerPosition] = useState<{
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }>({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  });
+  const [graphWidth, setGraphWidth] = useState(Dimensions.get("screen").width - 60);
 
   useEffect(() => {
     const handleResize = () => {
-      graphContainerRef.current?.measureInWindow((x, y, width, height) => {
-        setGraphContainerPosition({ x, y, width, height });
-      });
+      setGraphWidth(Dimensions.get("screen").width - 60);
     };
 
     const event = Dimensions.addEventListener("change", handleResize);
@@ -34,12 +19,10 @@ const HourlyChart: React.FC<{ hourlyWeather: THourlyWeather[] }> = ({ hourlyWeat
     return () => {
       event.remove();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphContainerRef.current, location, hourlyWeather.length]);
+  }, []);
 
   return (
     <View
-      ref={graphContainerRef}
       style={{
         flex: 1,
         backgroundColor: "rgba(0,0,0,0.2)",
@@ -54,7 +37,7 @@ const HourlyChart: React.FC<{ hourlyWeather: THourlyWeather[] }> = ({ hourlyWeat
           labels:
             hourlyWeather.length > 0
               ? hourlyWeather.map((item, index) =>
-                  index % 4 === 0 ? getDateAsString({ date: item.hour, type: ["HOUR", "MINUTE"], separator: ":" }) : ""
+                  index % 4 === 0 ? getDateAsString({ date: item.hour, type: ["HOUR", "MINUTE"], separator: ":" }) : "",
                 )
               : ["", ""],
           datasets: [
@@ -77,8 +60,8 @@ const HourlyChart: React.FC<{ hourlyWeather: THourlyWeather[] }> = ({ hourlyWeat
             borderRadius: 10,
           },
         }}
-        height={graphContainerPosition.height - 65 > 0 ? graphContainerPosition.height - 65 : 0}
-        width={graphContainerPosition.width - 20 > 0 ? graphContainerPosition.width - 20 : 0}
+        height={500}
+        width={graphWidth}
         yAxisSuffix="°C"
         style={{
           borderRadius: 10,

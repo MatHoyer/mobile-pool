@@ -5,7 +5,7 @@ import { TDailyWeather } from "@/components/tabs/weekly/types";
 import Typography from "@/components/Typography";
 import useLocationStore from "@/hooks/locationStore";
 import { useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const WeeklyTab = () => {
@@ -19,7 +19,7 @@ const WeeklyTab = () => {
 
     try {
       const weather = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&forecast_days=7&timezone=Europe%2FParis`
+        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&forecast_days=7&timezone=Europe%2FParis`,
       );
       if (!weather.ok) {
         throw new Error("Failed to fetch weather data");
@@ -61,15 +61,25 @@ const WeeklyTab = () => {
         padding: 10,
       }}
     >
-      <View style={{ flexDirection: "column", alignItems: "center", gap: 10 }}>
-        <Typography variant="h1">{location.name}</Typography>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <Typography>{location.region}</Typography>
-          <Typography>{location.country}</Typography>
+      <ScrollView>
+        <View style={{ flexDirection: "column", alignItems: "center", gap: 10 }}>
+          <Typography variant="h1">{location.name}</Typography>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <Typography>{location.region}</Typography>
+            <Typography>{location.country}</Typography>
+          </View>
         </View>
-      </View>
-      <DailyChart dailyWeather={dailyWeather} />
-      <DailyList dailyWeather={dailyWeather} />
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}
+        >
+          <DailyChart dailyWeather={dailyWeather} />
+          <DailyList dailyWeather={dailyWeather} />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

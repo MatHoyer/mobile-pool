@@ -5,7 +5,7 @@ import { THourlyWeather } from "@/components/tabs/today/types";
 import Typography from "@/components/Typography";
 import useLocationStore from "@/hooks/locationStore";
 import React, { useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const TodayTab = () => {
@@ -19,7 +19,7 @@ const TodayTab = () => {
 
     try {
       const weather = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&hourly=temperature_2m,wind_speed_10m,weathercode&forecast_days=1&timezone=Europe%2FParis`
+        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&hourly=temperature_2m,wind_speed_10m,weathercode&forecast_days=1&timezone=Europe%2FParis`,
       );
       if (!weather.ok) {
         throw new Error("Failed to fetch weather data");
@@ -55,21 +55,28 @@ const TodayTab = () => {
     <SafeAreaView
       style={{
         flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        gap: 10,
         padding: 10,
       }}
     >
-      <View style={{ flexDirection: "column", alignItems: "center", gap: 10 }}>
-        <Typography variant="h1">{location.name}</Typography>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <Typography>{location.region}</Typography>
-          <Typography>{location.country}</Typography>
+      <ScrollView>
+        <View style={{ flexDirection: "column", alignItems: "center", gap: 10 }}>
+          <Typography variant="h1">{location.name}</Typography>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <Typography>{location.region}</Typography>
+            <Typography>{location.country}</Typography>
+          </View>
         </View>
-      </View>
-      <HourlyChart hourlyWeather={hourlyWeather} />
-      <HourlyList hourlyWeather={hourlyWeather} />
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}
+        >
+          <HourlyChart hourlyWeather={hourlyWeather} />
+          <HourlyList hourlyWeather={hourlyWeather} />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

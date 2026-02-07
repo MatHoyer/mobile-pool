@@ -1,30 +1,15 @@
-import useLocationStore from "@/hooks/locationStore";
 import { getDateAsString } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Dimensions, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { TDailyWeather } from "./types";
 
 const DailyChart: React.FC<{ dailyWeather: TDailyWeather[] }> = ({ dailyWeather }) => {
-  const location = useLocationStore((state) => state.location);
-  const graphContainerRef = useRef<View>(null);
-  const [graphContainerPosition, setGraphContainerPosition] = useState<{
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }>({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  });
+  const [graphWidth, setGraphWidth] = useState(Dimensions.get("screen").width - 60);
 
   useEffect(() => {
     const handleResize = () => {
-      graphContainerRef.current?.measureInWindow((x, y, width, height) => {
-        setGraphContainerPosition({ x, y, width, height });
-      });
+      setGraphWidth(Dimensions.get("screen").width - 60);
     };
 
     const event = Dimensions.addEventListener("change", handleResize);
@@ -33,12 +18,10 @@ const DailyChart: React.FC<{ dailyWeather: TDailyWeather[] }> = ({ dailyWeather 
     return () => {
       event.remove();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphContainerRef.current, location, Dimensions.get("window").width, dailyWeather.length]);
+  }, []);
 
   return (
     <View
-      ref={graphContainerRef}
       style={{
         flex: 1,
         backgroundColor: "rgba(0,0,0,0.2)",
@@ -53,7 +36,7 @@ const DailyChart: React.FC<{ dailyWeather: TDailyWeather[] }> = ({ dailyWeather 
           labels:
             dailyWeather.length > 0
               ? dailyWeather.map((item, index) =>
-                  index % 2 === 0 ? getDateAsString({ date: item.day, type: ["DAY", "MONTH"], separator: "/" }) : ""
+                  index % 2 === 0 ? getDateAsString({ date: item.day, type: ["DAY", "MONTH"], separator: "/" }) : "",
                 )
               : ["", ""],
           datasets: [
@@ -81,8 +64,8 @@ const DailyChart: React.FC<{ dailyWeather: TDailyWeather[] }> = ({ dailyWeather 
             borderRadius: 10,
           },
         }}
-        height={graphContainerPosition.height - 65 > 0 ? graphContainerPosition.height - 65 : 0}
-        width={graphContainerPosition.width - 20 > 0 ? graphContainerPosition.width - 20 : 0}
+        height={500}
+        width={graphWidth}
         yAxisSuffix="°C"
         style={{
           borderRadius: 10,
