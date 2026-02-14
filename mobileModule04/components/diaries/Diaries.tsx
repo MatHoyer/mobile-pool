@@ -16,7 +16,7 @@ export const Diaries = () => {
   }, [user, getLastDiaries]);
 
   return (
-    <View style={{ width: "100%", paddingHorizontal: 20, paddingVertical: 10, gap: 10 }}>
+    <View style={{ width: "100%", flex: 1, paddingHorizontal: 20, paddingVertical: 10, gap: 10 }}>
       <Typography variant="large" style={{ textAlign: "center" }}>
         Your last diary entries
       </Typography>

@@ -1,5 +1,4 @@
 import { styles } from "@/assets/styles";
-import LogoutButton from "@/components/app/LogoutButton";
 import Button from "@/components/Button";
 import { Dialog, TDialogProps } from "@/components/Dialog";
 import { Diaries } from "@/components/diaries/Diaries";
@@ -121,22 +120,14 @@ const Profile = () => {
     >
       <PrivateRoute>
         <Diaries />
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 8,
+        <Button
+          style={{ alignSelf: "center" }}
+          onPress={() => {
+            setIsCreateDiaryDialogVisible(true);
           }}
         >
-          <Button
-            onPress={() => {
-              setIsCreateDiaryDialogVisible(true);
-            }}
-          >
-            <Typography variant="buttonText">Create Diary</Typography>
-          </Button>
-          <LogoutButton />
-        </View>
+          <Typography variant="buttonText">Create Diary</Typography>
+        </Button>
       </PrivateRoute>
       <CreateDiaryDialog visible={isCreateDiaryDialogVisible} onClose={() => setIsCreateDiaryDialogVisible(false)} />
     </SafeAreaView>
