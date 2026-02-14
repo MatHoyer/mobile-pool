@@ -145,6 +145,8 @@ const Stats = () => {
     },
   );
 
+  console.log(stats);
+
   return (
     <Card style={{ width: "90%" }}>
       <Typography variant="large" style={{ textAlign: "center" }}>
@@ -167,7 +169,7 @@ const Stats = () => {
                 gap: 10,
               }}
             >
-              {getDiaryIcon(Number(index))} {(100 * value) / allDiaries.length}%
+              {getDiaryIcon(Number(index))} <Typography>{value ? (100 * value) / allDiaries.length : 0}%</Typography>
             </View>
           );
         })}

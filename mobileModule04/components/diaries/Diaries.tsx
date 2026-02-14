@@ -12,7 +12,7 @@ export const Diaries = () => {
   useEffect(() => {
     if (!user?.email) return;
 
-    void getLastDiaries(user.email!);
+    void getLastDiaries(user.email);
   }, [user, getLastDiaries]);
 
   return (

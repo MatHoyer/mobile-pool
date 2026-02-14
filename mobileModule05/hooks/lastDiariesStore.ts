@@ -26,19 +26,19 @@ const useLastDiariesStore = create<TLastDiariesStore>((set) => ({
   getDiaries: async (userEmail: string) => {
     const allDiaries = await getLastDiaries(userEmail);
 
-    set({ allDiaries, lastDiaries: allDiaries.splice(0, DEFAULT_DIARIES_LIMIT) });
+    set({ allDiaries, lastDiaries: allDiaries.slice(0, DEFAULT_DIARIES_LIMIT) });
   },
   addDiary: async (diary: Omit<TDiary, "id">) => {
     await addDoc(collection(db, "diaries"), diary);
 
     const allDiaries = await getLastDiaries(diary.email);
-    set({ allDiaries, lastDiaries: allDiaries.splice(0, DEFAULT_DIARIES_LIMIT) });
+    set({ allDiaries, lastDiaries: allDiaries.slice(0, DEFAULT_DIARIES_LIMIT) });
   },
   removeDiary: async (id: TDiary["id"], userEmail: string) => {
     await deleteDoc(doc(db, "diaries", id));
 
     const allDiaries = await getLastDiaries(userEmail);
-    set({ allDiaries, lastDiaries: allDiaries.splice(0, DEFAULT_DIARIES_LIMIT) });
+    set({ allDiaries, lastDiaries: allDiaries.slice(0, DEFAULT_DIARIES_LIMIT) });
   },
 }));
 

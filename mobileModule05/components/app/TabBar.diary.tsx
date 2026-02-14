@@ -1,3 +1,4 @@
+import { CalendarTab } from "@/app/_logged_tabs/calendar";
 import Profile from "@/app/_logged_tabs/profile";
 import { Calendar, LucideIcon, User } from "lucide-react-native";
 import { useState } from "react";
@@ -18,7 +19,7 @@ export const DiaryTabBar = () => {
   const renderScene = ({ route }: { route: TabRoute }) => {
     switch (route.key) {
       case "calendar":
-        return <Calendar />;
+        return <CalendarTab />;
       case "profile":
         return <Profile />;
       default:
