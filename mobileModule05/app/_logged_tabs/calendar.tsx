@@ -7,14 +7,18 @@ import { View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const formatDate = (date: Date) => {
+  return date.toISOString().split("T")[0];
+};
+
 export const CalendarTab = () => {
   const { allDiaries } = useLastDiariesStore();
-  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>(formatDate(new Date()));
 
   const diariesByDate = useMemo(() => {
     return allDiaries.reduce(
       (acc, diary) => {
-        const key = diary.date.toISOString().split("T")[0];
+        const key = formatDate(diary.date);
         if (acc[key]) {
           acc[key].push(diary);
         } else {
@@ -39,13 +43,16 @@ export const CalendarTab = () => {
         <Calendar
           style={{ width: "100%", height: "100%" }}
           onDayPress={(day) => setSelectedDate(day.dateString)}
-          markedDates={Object.keys(diariesByDate).reduce(
-            (acc, date) => ({
-              ...acc,
-              [date]: { marked: true, selectedColor: "blue" },
-            }),
-            {},
-          )}
+          markedDates={{
+            ...Object.keys(diariesByDate).reduce(
+              (acc, date) => ({
+                ...acc,
+                [date]: { marked: true, selectedColor: "blue" },
+              }),
+              {},
+            ),
+            [selectedDate]: { selected: true, selectedColor: "blue" },
+          }}
         />
         <View style={{ flex: 1 }}>
           <Diaries diaries={diariesByDate[selectedDate] || []} height={"100%"} />
