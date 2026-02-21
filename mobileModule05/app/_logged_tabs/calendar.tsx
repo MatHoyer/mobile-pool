@@ -3,7 +3,7 @@ import PrivateRoute from "@/components/routes/PrivateRoute";
 import useLastDiariesStore from "@/hooks/lastDiariesStore";
 import { TDiary } from "@/lib/diaries/diaries.types";
 import { useMemo, useState } from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -31,34 +31,36 @@ export const CalendarTab = () => {
   }, [allDiaries]);
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        flexDirection: "column",
-        gap: 10,
-        paddingVertical: 20,
-      }}
-    >
-      <PrivateRoute>
-        <Calendar
-          style={{ width: "100%", height: "100%" }}
-          onDayPress={(day) => setSelectedDate(day.dateString)}
-          markedDates={{
-            ...Object.keys(diariesByDate).reduce(
-              (acc, date) => ({
-                ...acc,
-                [date]: { marked: true, selectedColor: "blue" },
-              }),
-              {},
-            ),
-            [selectedDate]: { selected: true, selectedColor: "blue" },
-          }}
-        />
-        <View style={{ flex: 1 }}>
-          <Diaries diaries={diariesByDate[selectedDate] || []} height={"100%"} />
-        </View>
-      </PrivateRoute>
-    </SafeAreaView>
+    <ScrollView>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          flexDirection: "column",
+          gap: 10,
+          paddingVertical: 20,
+        }}
+      >
+        <PrivateRoute>
+          <Calendar
+            style={{ width: "100%", height: "100%" }}
+            onDayPress={(day) => setSelectedDate(day.dateString)}
+            markedDates={{
+              ...Object.keys(diariesByDate).reduce(
+                (acc, date) => ({
+                  ...acc,
+                  [date]: { marked: true, selectedColor: "blue" },
+                }),
+                {},
+              ),
+              [selectedDate]: { selected: true, selectedColor: "blue" },
+            }}
+          />
+          <View style={{ flex: 1 }}>
+            <Diaries diaries={diariesByDate[selectedDate] || []} height={"100%"} />
+          </View>
+        </PrivateRoute>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 

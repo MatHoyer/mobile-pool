@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "expo-image";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
@@ -195,29 +195,31 @@ const Profile = () => {
   const [isCreateDiaryDialogVisible, setIsCreateDiaryDialogVisible] = useState(false);
 
   return (
-    <SafeAreaView
-      style={{
-        alignItems: "center",
-        flexDirection: "column",
-        gap: 10,
-        paddingVertical: 20,
-      }}
-    >
-      <PrivateRoute>
-        <ProfileGestion />
-        <Diaries diaries={lastDiaries} />
-        <Stats />
-        <Button
-          onPress={() => {
-            setIsCreateDiaryDialogVisible(true);
-          }}
-        >
-          <Typography variant="buttonText">Create Diary</Typography>
-        </Button>
-        <LogoutButton />
-      </PrivateRoute>
-      <CreateDiaryDialog visible={isCreateDiaryDialogVisible} onClose={() => setIsCreateDiaryDialogVisible(false)} />
-    </SafeAreaView>
+    <ScrollView>
+      <SafeAreaView
+        style={{
+          alignItems: "center",
+          flexDirection: "column",
+          gap: 10,
+          paddingVertical: 20,
+        }}
+      >
+        <PrivateRoute>
+          <ProfileGestion />
+          <Diaries diaries={lastDiaries} />
+          <Stats />
+          <Button
+            onPress={() => {
+              setIsCreateDiaryDialogVisible(true);
+            }}
+          >
+            <Typography variant="buttonText">Create Diary</Typography>
+          </Button>
+          <LogoutButton />
+        </PrivateRoute>
+        <CreateDiaryDialog visible={isCreateDiaryDialogVisible} onClose={() => setIsCreateDiaryDialogVisible(false)} />
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 
