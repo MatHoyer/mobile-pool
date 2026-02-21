@@ -4,6 +4,8 @@ import { Dialog, TDialogProps } from "@/components/Dialog";
 import { Diaries } from "@/components/diaries/Diaries";
 import { DiaryIcons, getDiaryIcon, isFeeling } from "@/components/diaries/Diary.icons";
 import Input from "@/components/Input";
+import LogoutButton from "@/components/app/LogoutButton";
+
 import { useAuth } from "@/components/providers/auth.provider";
 import PrivateRoute from "@/components/routes/PrivateRoute";
 import Typography from "@/components/Typography";
@@ -212,6 +214,7 @@ const Profile = () => {
         >
           <Typography variant="buttonText">Create Diary</Typography>
         </Button>
+        <LogoutButton />
       </PrivateRoute>
       <CreateDiaryDialog visible={isCreateDiaryDialogVisible} onClose={() => setIsCreateDiaryDialogVisible(false)} />
     </SafeAreaView>
