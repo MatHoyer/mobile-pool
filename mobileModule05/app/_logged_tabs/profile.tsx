@@ -169,7 +169,8 @@ const Stats = () => {
                 gap: 10,
               }}
             >
-              {getDiaryIcon(Number(index))} <Typography>{value ? (100 * value) / allDiaries.length : 0}%</Typography>
+              {getDiaryIcon(Number(index))}{" "}
+              <Typography>{value ? Math.round((100 * value) / allDiaries.length) : 0}%</Typography>
             </View>
           );
         })}
