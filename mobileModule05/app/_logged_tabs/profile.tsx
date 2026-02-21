@@ -1,10 +1,10 @@
+import LogoutButton from "@/components/app/LogoutButton";
 import Button from "@/components/Button";
 import { Card } from "@/components/Card";
 import { Dialog, TDialogProps } from "@/components/Dialog";
 import { Diaries } from "@/components/diaries/Diaries";
 import { DiaryIcons, getDiaryIcon, isFeeling } from "@/components/diaries/Diary.icons";
 import Input from "@/components/Input";
-import LogoutButton from "@/components/app/LogoutButton";
 
 import { useAuth } from "@/components/providers/auth.provider";
 import PrivateRoute from "@/components/routes/PrivateRoute";
@@ -152,7 +152,7 @@ const Stats = () => {
   return (
     <Card style={{ width: "90%" }}>
       <Typography variant="large" style={{ textAlign: "center" }}>
-        Stats
+        Stats ({allDiaries.length} entries)
       </Typography>
       <Card
         style={{
